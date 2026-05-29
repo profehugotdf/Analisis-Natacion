@@ -39,6 +39,74 @@
     .hist-list { padding:16px; display:flex; flex-direction:column; gap:10px; }
     .hist-empty { text-align:center; padding:80px 20px; color:var(--muted); font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
     .hist-empty::before { content:'[ ]'; display:block; font-size:2.5rem; opacity:0.2; margin-bottom:12px; }
+    /* ── DIAGNÓSTICO AUTOMÁTICO ── */
+    .diag-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px 18px;
+      margin-top: 12px;
+      position: relative;
+    }
+    .diag-panel::before {
+      content:''; position:absolute; top:0;left:0;right:0; height:2px;
+      background: linear-gradient(90deg, #9b59b6, transparent);
+    }
+    .diag-title {
+      font-size:10px; letter-spacing:3px; text-transform:uppercase;
+      color:#9b59b6; font-family:'Space Mono',monospace; margin-bottom:14px;
+    }
+    .diag-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .diag-item:last-child { margin-bottom: 0; }
+    .diag-item.alerta  { border-left: 3px solid var(--danger); }
+    .diag-item.optimo  { border-left: 3px solid var(--accent3); }
+    .diag-item.warning { border-left: 3px solid var(--accent2); }
+    .diag-item.info    { border-left: 3px solid var(--accent); }
+    .diag-icon  { font-size: 1.4rem; flex-shrink: 0; }
+    .diag-name  { font-weight:700; font-size:0.9rem; text-transform:uppercase;
+                  letter-spacing:1px; margin-bottom:4px; }
+    .diag-desc  { font-size:11px; color:var(--muted); line-height:1.6; }
+    .diag-data  { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .diag-datum { background:var(--bg); border:1px solid var(--border);
+                  border-radius:3px; padding:5px 9px; text-align:center; }
+    .diag-datum-val   { font-family:'Space Mono',monospace; font-weight:700; font-size:0.9rem; }
+    .diag-datum-label { font-size:8px; letter-spacing:1px; text-transform:uppercase;
+                        color:var(--muted); margin-top:2px; }
+
+    /* Checkbox selección historial */
+    .hist-check {
+      width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .hist-card.selected { border-color: var(--accent); }
+    .hist-card.selected::before { background: linear-gradient(90deg,var(--accent),transparent) !important; }
+    .hist-export-bar {
+      display: none; position: sticky; bottom: 0; z-index: 5;
+      background: var(--surface); border-top: 1px solid var(--accent);
+      padding: 12px 16px; gap: 10px; align-items: center;
+    }
+    .hist-export-bar.visible { display: flex; }
+    .hist-export-count {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: var(--accent); flex: 1;
+    }
+    .hist-export-btn {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 9px 16px; border-radius: 3px; cursor: pointer;
+      border: 1px solid var(--accent); background: var(--accent);
+      color: var(--bg);
+    }
+    .hist-export-btn:active { opacity: 0.7; }
     .hist-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:16px; cursor:pointer; transition:border-color 0.15s; position:relative; overflow:hidden; }
     .hist-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
     .hist-card.zona-red::before   { background:linear-gradient(90deg,#c0392b,transparent); }
@@ -299,6 +367,203 @@
     .footer-copy-btn:active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
     .footer-copy-btn.copied { background: var(--accent3); color: var(--bg); border-color: var(--accent3); }
 
+    /* Changelog + reporte */
+    .footer-extra {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .footer-extra-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: all 0.15s;
+    }
+    .footer-extra-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .changelog-panel {
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+      margin-top: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      line-height: 1.8;
+    }
+    .changelog-panel.open { display: block; }
+    .changelog-version {
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    .changelog-item { color: var(--muted); padding-left: 12px; }
+    .changelog-item::before { content: '+ '; color: var(--accent3); }
+
+    /* ── TOUCH START SCREEN ── */
+    .touch-start-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      z-index: 10;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .touch-start-icon  { font-size: clamp(4rem,14vw,7rem); margin-bottom: 16px; opacity:0.7; }
+    .touch-start-label {
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 8px;
+    }
+    .touch-start-action {
+      font-size: clamp(2rem,7vw,3.5rem); font-weight: 900;
+      text-transform: uppercase; color: var(--accent); letter-spacing: 2px;
+      text-shadow: 0 0 30px rgba(0,212,255,0.4);
+    }
+    .touch-start-sub {
+      font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace;
+      margin-top: 12px; letter-spacing: 1px;
+    }
+
+    /* ── VIRAJE STATES EN ZONA VUELTA ── */
+    .touch-zone-vuelta.viraje-1 { background: linear-gradient(160deg,#0d1f33,#091525); border-color: rgba(0,212,255,0.6); }
+    .touch-zone-vuelta.viraje-2 { background: linear-gradient(160deg,#2a1200,#1a0c00); border-color: rgba(255,107,53,0.6); }
+    .touch-zone-vuelta.viraje-3 { background: linear-gradient(160deg,#002b11,#001a0a); border-color: rgba(127,255,107,0.6); }
+
+    /* ── REACTION MODE ── */
+    #reactionMode {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      flex-direction: column;
+      background: var(--bg);
+      touch-action: none;
+    }
+    #reactionMode.active { display: flex; }
+
+    .reaction-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .reaction-topbar-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .reaction-target {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      -webkit-touch-callout: none;
+      transition: background 0.05s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reaction-icon  { font-size: clamp(3.5rem,12vw,6rem); margin-bottom: 12px; }
+    .reaction-status {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(0.9rem,3vw,1.3rem);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 20px;
+    }
+    .reaction-time {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(3rem,12vw,6rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-top: 16px;
+      display: none;
+    }
+    .reaction-eval {
+      font-size: clamp(0.8rem,2.5vw,1.1rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .reaction-history {
+      flex-shrink: 0;
+      max-height: 140px;
+      overflow-y: auto;
+      padding: 0 16px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .reaction-hist-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .reaction-bottombar {
+      padding: 12px 16px;
+      flex-shrink: 0;
+      display: flex;
+      gap: 8px;
+    }
+    .reaction-btn {
+      flex: 1;
+      padding: 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+    }
+    .reaction-btn.start  { border-color: var(--accent2); color: var(--accent2); }
+    .reaction-btn.danger { border-color: var(--danger);  color: var(--danger); }
+    .reaction-btn:active { opacity: 0.7; }
+
     /* ── TOGGLE MODO TÁCTIL ── */
     .mode-toggle {
       display:flex; align-items:center; gap:12px; background:var(--surface);
@@ -311,6 +576,34 @@
     .mode-toggle-title { font-weight:700; font-size:1.1rem; letter-spacing:1px; text-transform:uppercase; }
     .mode-toggle-sub { font-size:11px; color:var(--muted); letter-spacing:1px; font-family:'Space Mono',monospace; }
     .mode-badge { background:var(--accent); color:var(--bg); font-size:9px; letter-spacing:2px; font-family:'Space Mono',monospace; padding:3px 8px; border-radius:2px; font-weight:700; }
+
+    /* ── PANTALLA INICIO TÁCTIL ── */
+    #touchStart {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      cursor: pointer;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    #touchStart.hidden { display: none; }
+    .touch-start-icon   { font-size: clamp(5rem,18vw,9rem); margin-bottom: 16px; opacity: 0.6; }
+    .touch-start-label  { font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+                          color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 8px; }
+    .touch-start-action { font-size: clamp(2rem,8vw,4rem); font-weight: 900; text-transform: uppercase;
+                          color: var(--accent); letter-spacing: 2px; text-align: center; padding: 0 20px; }
+    .touch-start-sub    { font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace;
+                          margin-top: 12px; letter-spacing: 2px; opacity: 0.6; }
+
+    /* ── Estados de viraje en zona izquierda ── */
+    .touch-zone-vuelta.viraje-1 { background: linear-gradient(160deg,#001a33,#000d1a); border-color: rgba(0,212,255,0.6) !important; }
+    .touch-zone-vuelta.viraje-2 { background: linear-gradient(160deg,#2a1200,#1a0900); border-color: rgba(255,107,53,0.6) !important; }
+    .touch-zone-vuelta.viraje-3 { background: linear-gradient(160deg,#002b11,#001a0a); border-color: rgba(127,255,107,0.6) !important; }
 
     /* ── MODO TÁCTIL ── */
     #touchMode { display:none; position:fixed; inset:0; z-index:100; flex-direction:column; background:var(--bg); overflow:hidden; touch-action:none; }
@@ -428,6 +721,42 @@
     .zone-red    { background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.3); }
     .zone-white  { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); }
     .zone-blue   { background:rgba(52,152,219,0.15); border:1px solid rgba(52,152,219,0.3); }
+
+    /* ── PREFLIGHT ── */
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .preflight-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 20px;
+      width: 100%;
+      max-width: 320px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 24px;
+    }
+    .preflight-title {
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      font-size: 9px;
+    }
+    .preflight-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      align-items: center;
+    }
+    .preflight-row:last-child { margin-bottom: 0; }
+    .preflight-key { color: var(--muted); font-size: 9px; letter-spacing: 1px; }
+    .preflight-val { font-weight: 700; font-size: 11px; }
   </style>
 </head>
 <body>
@@ -437,6 +766,7 @@
 
 <!-- ══ MODO TÁCTIL ══ -->
 <div id="touchMode">
+
   <div class="touch-topbar">
     <div class="touch-topbar-item">
       <div class="touch-topbar-label">Crono total</div>
@@ -452,14 +782,48 @@
     </div>
     <button class="touch-exit" onclick="salirModoTactil()">✕ Salir</button>
   </div>
+  <!-- Pantalla de inicio gigante con preflight -->
+  <div id="touchStart" ontouchstart="onTouchStart(event)" onclick="onTouchStart(event)">
+    <div class="touch-start-icon" style="animation:float 3s ease-in-out infinite">🏊</div>
+    <div class="touch-start-label">Cronómetro listo</div>
+
+    <!-- Panel de chequeo pre-largada -->
+    <div class="preflight-panel">
+      <div class="preflight-title">📋 Chequeo técnico</div>
+      <div class="preflight-row">
+        <span class="preflight-key">ESTILO</span>
+        <span class="preflight-val" id="chkEstilo" style="color:var(--accent)">—</span>
+      </div>
+      <div class="preflight-row">
+        <span class="preflight-key">PISCINA</span>
+        <span class="preflight-val" id="chkPiscina" style="color:var(--text)">—</span>
+      </div>
+      <div class="preflight-row">
+        <span class="preflight-key">CICLOS / TOMA</span>
+        <span class="preflight-val" id="chkCiclos" style="color:var(--accent3)">—</span>
+      </div>
+      <div class="preflight-row">
+        <span class="preflight-key">VIRAJE</span>
+        <span class="preflight-val" id="chkViraje" style="color:var(--accent2)">—</span>
+      </div>
+      <div class="preflight-row" id="chkTipoRow" style="display:none">
+        <span class="preflight-key">TIPO</span>
+        <span class="preflight-val" id="chkTipo" style="color:var(--muted)">—</span>
+      </div>
+    </div>
+
+    <div class="touch-start-action">TOCAR PARA LARGAR</div>
+    <div class="touch-start-sub">El tiempo arranca inmediatamente</div>
+  </div>
+
   <div class="touch-zones">
     <div class="touch-zone touch-zone-vuelta" id="zoneVuelta" ontouchstart="onTouchVuelta(event)" onclick="onTouchVuelta(event)">
       <div class="touch-zone-counter" id="t-lapCountZone">0 vueltas</div>
-      <div class="touch-zone-icon">🏊</div>
-      <div class="touch-zone-label">Toque para</div>
-      <div class="touch-zone-action">Vuelta</div>
-      <div class="touch-zone-crono" id="t-lapCronoZone">00:00:00</div>
-      <div class="touch-zone-state">tiempo del lap actual</div>
+      <div class="touch-zone-icon"   id="t-virajeIcon">🏊</div>
+      <div class="touch-zone-label"  id="t-virajeLabel">Toque para</div>
+      <div class="touch-zone-action" id="t-virajeAction">Vuelta</div>
+      <div class="touch-zone-crono"  id="t-lapCronoZone">00:00:00</div>
+      <div class="touch-zone-state"  id="t-virajeState">tiempo del lap actual</div>
     </div>
     <div class="touch-zone touch-zone-ciclo" id="zoneCiclo" ontouchstart="onTouchCiclo(event)" onclick="onTouchCiclo(event)">
       <div class="touch-zone-counter" id="t-cicloCountZone">0 ciclos</div>
@@ -489,6 +853,16 @@
     </div>
   </header>
 
+  <!-- Test de Partida -->
+  <div class="mode-toggle" onclick="entrarModoReaccion()" style="border-color:rgba(255,107,53,0.3)">
+    <div class="mode-toggle-icon">⚡</div>
+    <div class="mode-toggle-text">
+      <div class="mode-toggle-title">Test de Reacción</div>
+      <div class="mode-toggle-sub">Tiempo de partida · falsa salida · historial de intentos</div>
+    </div>
+    <div class="mode-badge" style="background:var(--accent2)">ACTIVAR</div>
+  </div>
+
   <div class="mode-toggle" onclick="entrarModoTactil()">
     <div class="mode-toggle-icon">👆</div>
     <div class="mode-toggle-text">
@@ -508,6 +882,33 @@
       <div class="panel-title">Configuración de prueba</div>
       <div class="field"><label>Metros por vuelta</label><input type="number" id="distanciaVuelta" min="1" step="1" value="25"></div>
       <div class="field"><label>Ciclos por toma (N)</label><input type="number" id="ciclosBrazada" min="1" step="1" value="3"><div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace;line-height:1.5">Cada toma mide N ciclos continuos.<br>Podés hacer varias tomas por vuelta.<br>Mediana de tomas → <strong style="color:var(--accent3)">1 ciclo</strong></div></div>
+      <div class="field">
+        <label>Análisis de viraje</label>
+        <select id="configViraje" onchange="const v=this.value!=='OFF';document.getElementById('tipoVirajeField').style.display=v?'block':'none';document.getElementById('metroRupturaField').style.display=v?'block':'none'" style="width:100%;padding:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:12px;border-radius:3px;outline:none">
+          <option value="OFF">Desactivado</option>
+          <option value="ALWAYS">Todas las vueltas</option>
+          <option value="2">Cada 2 vueltas (cada 50m)</option>
+          <option value="4">Cada 4 vueltas (cada 100m)</option>
+          <option value="8">Cada 8 vueltas (cada 200m)</option>
+        </select>
+      </div>
+      <div class="field" id="tipoVirajeField" style="display:none">
+        <label>Tipo de viraje</label>
+        <select id="tipoViraje" style="width:100%;padding:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:12px;border-radius:3px;outline:none">
+          <option value="americana">Vuelta americana (crol/espalda)</option>
+          <option value="ortodoxo">Viraje ortodoxo (pecho/mariposa)</option>
+        </select>
+      </div>
+      <div class="field" id="metroRupturaField" style="display:none">
+        <label>Metro de ruptura estimado (m)</label>
+        <input type="number" id="metroRuptura" min="0" max="15" step="0.5" value="8"
+               placeholder="0 = solo tiempos">
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace;line-height:1.5">
+          Valor por defecto para toda la sesión.<br>
+          Editalo por vuelta en la tabla después del test.<br>
+          <span style="opacity:0.6">0 = solo tiempos, sin velocidades.</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -548,7 +949,7 @@
     <!-- ══ GRÁFICO COMBO POR VUELTA ══ -->
     <div class="chart-panel">
       <div class="chart-title">Velocidad · Frecuencia · Longitud por vuelta</div>
-      <div class="chart-subtitle">Barras = velocidad · Línea naranja = frecuencia · Línea verde = longitud</div>
+      <div class="chart-subtitle">Barras = vel. total · Magenta = vel. nado puro · Naranja = frecuencia · Verde = longitud</div>
       <div class="no-data" id="noDataCombo">Esperando datos de vueltas</div>
       <canvas id="chartCombo" style="display:none"></canvas>
     </div>
@@ -583,25 +984,43 @@
         <div style="font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;opacity:0.7;margin-top:4px">
           Referencia: promedio de las primeras N vueltas
         </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:10px 0">
+        <div class="tqe-config-title">🔄 Evaluación costo/beneficio del viraje</div>
+        <div class="tqe-slider-row">
+          <span class="tqe-slider-label">Vueltas post-viraje</span>
+          <input type="range" class="tqe-slider" id="umbralVirajePost" min="1" max="4" step="1" value="2"
+                 oninput="document.getElementById('umbralVirajePostVal').textContent=this.value;renderTabla()">
+          <span class="tqe-slider-val" id="umbralVirajePostVal">2</span>
+        </div>
+        <div style="font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;opacity:0.7;margin-top:4px">
+          Vueltas que se analizan después de cada viraje
+        </div>
       </div>
 
       <div style="overflow-x:auto">
         <table class="eff-table">
           <thead><tr>
             <th>Vuelta</th><th>Tiempo</th>
-            <th>Vel (m/s)</th><th></th>
+            <th>Vel (m/s)</th><th>Pace</th><th></th>
             <th>Frec (cic/min)</th><th></th>
             <th>Long (m/cic)</th><th></th>
+            <th>T.Viraje</th><th>m.rupt.</th><th>Nado puro</th>
             <th>Estado</th>
           </tr></thead>
           <tbody id="effBody">
-            <tr class="empty-row"><td colspan="9">Sin datos — registrá la primera vuelta</td></tr>
+            <tr class="empty-row"><td colspan="12">Sin datos — registrá la primera vuelta</td></tr>
           </tbody>
         </table>
       </div>
 
       <!-- Panel de prescripción TQE -->
       <div id="tqePanel" style="display:none"></div>
+
+      <!-- Panel de evaluación de virajes -->
+      <div id="virajeEvalPanel" style="display:none;margin-top:12px"></div>
+
+      <!-- Motor de Diagnóstico Automático -->
+      <div id="diagnosticoPanel" style="display:none"></div>
     </div>
 
   </div>
@@ -624,13 +1043,35 @@
 </div>
 </div>
 
+<!-- ══ REACTION MODE ══ -->
+<div id="reactionMode">
+  <div class="reaction-topbar">
+    <div class="reaction-topbar-label">⚡ Test de Reacción de Partida</div>
+    <button class="touch-exit" onclick="salirModoReaccion()">✕ Salir</button>
+  </div>
+  <div class="reaction-target" id="reactionTarget"
+       ontouchstart="onTouchReaccion(event)" onclick="onTouchReaccion(event)">
+    <div class="reaction-icon"   id="reactionIcon">⏱</div>
+    <div class="reaction-status" id="reactionStatus">Tocá "A sus marcas" para iniciar</div>
+    <div class="reaction-time"   id="reactionTime">000</div>
+    <div class="reaction-eval"   id="reactionEval"></div>
+  </div>
+  <div class="reaction-history" id="reactionHistory"></div>
+  <div class="reaction-bottombar">
+    <div class="reaction-btn start"  id="btnReaccion" ontouchstart="prepararPartida()" onclick="prepararPartida()">▶ A sus marcas</div>
+    <div class="reaction-btn danger" ontouchstart="resetearReaccion()" onclick="resetearReaccion()">↺ Reset</div>
+    <div class="reaction-btn" style="border-color:var(--muted)" ontouchstart="borrarHistorialReaccion()" onclick="borrarHistorialReaccion()">🗑 Borrar</div>
+  </div>
+</div>
+
 <!-- HISTORIAL -->
 <div id="historialMode">
   <div class="hist-header">
     <button class="hist-btn" onclick="cerrarHistorial()">&#8592; Volver</button>
     <h2>Historial</h2>
     <div class="hist-actions">
-      <button class="hist-btn accent" onclick="exportarCSV()">&#8595; Exportar</button>
+      <button class="hist-btn accent" onclick="exportarCSV()">&#8595; CSV</button>
+      <button class="hist-btn" style="border-color:#ffd700;color:#ffd700" onclick="exportarJSON()">&#8595; JSON</button>
       <label class="hist-btn" style="border-color:var(--accent);color:var(--accent);cursor:pointer">
         &#8593; Importar
         <input type="file" accept=".csv" onchange="importarCSV(event)" style="display:none">
@@ -650,6 +1091,12 @@
     <button class="hist-sort-btn"        id="sort-zona"      onclick="sortHistorial('zona')">     Zona      <span class="hist-sort-dir" id="dir-zona"></span></button>
   </div>
   <div class="hist-list" id="histList"></div>
+  <!-- Barra de exportación selección -->
+  <div class="hist-export-bar" id="histExportBar">
+    <div class="hist-export-count" id="histExportCount">0 seleccionados</div>
+    <button class="hist-export-btn" onclick="exportarSeleccion()">↓ Exportar JSON</button>
+    <button class="hist-btn" onclick="deseleccionarTodo()" style="font-size:10px">✕ Limpiar</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1017,7 +1464,40 @@ function vibrar(p) { if(navigator.vibrate) navigator.vibrate(p); }
 // ═══════════════════════════════════════════════════════
 // MODO TÁCTIL
 // ═══════════════════════════════════════════════════════
-function entrarModoTactil() { document.getElementById('touchMode').classList.add('active'); document.body.style.overflow='hidden'; actualizarTouchCounters(); }
+function entrarModoTactil() {
+  document.getElementById('touchMode').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  actualizarTouchCounters();
+
+  // Poblar preflight panel
+  const cfg     = getConfigViraje();
+  const estilo  = document.getElementById('estiloNado')?.value  || 'Crol';
+  const piscina = document.getElementById('distanciaVuelta')?.value || '25';
+  const ciclos  = document.getElementById('ciclosBrazada')?.value || '3';
+
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('chkEstilo',  estilo.toUpperCase());
+  set('chkPiscina', piscina + 'm');
+  set('chkCiclos',  ciclos + ' cic');
+
+  const virajeLabels = {
+    'OFF':'Desactivado','ALWAYS':'Todas las vueltas',
+    '2':'Cada 2 vueltas','4':'Cada 4 vueltas','8':'Cada 8 vueltas'
+  };
+  set('chkViraje', virajeLabels[cfg.freq] || cfg.freq);
+
+  const tipoRow = document.getElementById('chkTipoRow');
+  if (cfg.freq !== 'OFF' && tipoRow) {
+    tipoRow.style.display = 'flex';
+    set('chkTipo', cfg.tipo === 'americana' ? 'Vuelta americana' : 'Viraje ortodoxo');
+  } else if (tipoRow) {
+    tipoRow.style.display = 'none';
+  }
+
+  // Mostrar pantalla de inicio
+  const ts = document.getElementById('touchStart');
+  if (ts) ts.classList.remove('hidden');
+}
 function salirModoTactil()  { document.getElementById('touchMode').classList.remove('active'); document.body.style.overflow=''; }
 function actualizarTouchCounters() {
   const laps=document.getElementById('lapsVuelta').children.length, ciclos=registrosCiclos.length;
@@ -1027,13 +1507,182 @@ function actualizarTouchCounters() {
   document.getElementById('t-cicloCountZone').textContent=ciclos+(ciclos===1?' ciclo':' ciclos');
 }
 function onTouchVuelta(e) {
-  e.preventDefault(); const now=Date.now();
-  if(now-lastTouchVuelta<400) return; lastTouchVuelta=now;
-  addRipple(e,document.getElementById('zoneVuelta'));
-  flashScreen('cyan'); vibrar([40,25,40]); beepVuelta();
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastTouchVuelta < 300) return;
+  lastTouchVuelta = now;
+  addRipple(e, document.getElementById('zoneVuelta'));
+
+  // Si hay viraje activo, manejar secuencia
+  if (virajeEstado !== 'IDLE' && virajeEstado !== 'ESPERANDO_INICIO') {
+    handleVirajeTouch();
+    return;
+  }
+
+  // Vuelta normal
+  flashScreen('cyan');
+  vibrar([40,25,40]);
+  beepVuelta();
   registrarLap();
-  const laps=document.getElementById('lapsVuelta').children.length;
-  showLapFlash('V'+laps,'#00d4ff'); actualizarTouchCounters();
+  const laps = document.getElementById('lapsVuelta').children.length;
+  showLapFlash('V'+laps, '#00d4ff');
+  actualizarTouchCounters();
+
+  // ¿La PRÓXIMA vuelta tiene viraje? Preparar zona
+  if (esVueltaDeViraje(laps + 1)) {
+    // Beep de aviso diferente al de vuelta
+    setTimeout(() => {
+      if (corriendoVuelta) {
+        beep(600, 0.06, 'sine', 0.25);
+        setTimeout(() => beep(900, 0.08, 'sine', 0.2), 80);
+      }
+    }, 400);
+    virajeEstado = 'PASO1';
+    actualizarZonaVirajeUI(1);
+  }
+}
+
+function handleVirajeTouch() {
+  const tipo = getConfigViraje().tipo;
+
+  // ══ VUELTA AMERICANA (crol/espalda) ══
+  // Paso 1: inicio rotación  → mide tiempo de aproximación
+  // Paso 2: pies en pared    → CIERRA LAP
+  // Paso 3: ruptura          → mide subacuático
+  if (tipo === 'americana') {
+
+    if (virajeEstado === 'PASO1') {
+      virajeT1 = tiempoVuelta;
+      virajeEstado = 'PASO2';
+      flashScreen('cyan'); vibrar(30); beepViraje(1);
+      actualizarZonaVirajeUI(2);
+
+    } else if (virajeEstado === 'PASO2') {
+      virajeT2 = tiempoVuelta;
+      flashScreen('orange'); vibrar([40,25,40]); beepViraje(2);
+      registrarLap();  // ← cierra el LAP en pies
+      const laps = document.getElementById('lapsVuelta').children.length;
+      showLapFlash('V'+laps, '#00d4ff');
+      actualizarTouchCounters();
+      virajeEstado = 'PASO3';
+      actualizarZonaVirajeUI(3);
+
+    } else if (virajeEstado === 'PASO3') {
+      virajeT3 = tiempoVuelta;
+      flashScreen('green'); vibrar([20,15,60]); beepViraje(3);
+      guardarDatosViraje('americana', virajeT1, virajeT2, virajeT3, 'Rotación', 'Subacuático');
+      const lapsAhora = document.getElementById('lapsVuelta').children.length;
+      // Si ALWAYS, la siguiente también tiene viraje
+      if (esVueltaDeViraje(lapsAhora + 1)) {
+        virajeEstado = 'PASO1';
+        actualizarZonaVirajeUI(1);
+      } else {
+        virajeEstado = 'IDLE';
+        actualizarZonaVirajeUI(0);
+      }
+      renderTabla();
+    }
+
+  // ══ VIRAJE ORTODOXO (pecho/mariposa) ══
+  // Paso 1: contacto de manos → CIERRA LAP
+  // Paso 2: despegue de pies  → mide tiempo en pared
+  // Paso 3: ruptura           → mide subacuático
+  } else {
+
+    if (virajeEstado === 'PASO1') {
+      virajeT1 = tiempoVuelta;
+      flashScreen('orange'); vibrar([40,25,40]); beepViraje(2);
+      registrarLap();  // ← cierra el LAP en manos
+      const laps = document.getElementById('lapsVuelta').children.length;
+      showLapFlash('V'+laps, '#00d4ff');
+      actualizarTouchCounters();
+      virajeEstado = 'PASO2';
+      actualizarZonaVirajeUI(2);
+
+    } else if (virajeEstado === 'PASO2') {
+      virajeT2 = tiempoVuelta;
+      flashScreen('cyan'); vibrar(30); beepViraje(1);
+      virajeEstado = 'PASO3';
+      actualizarZonaVirajeUI(3);
+
+    } else if (virajeEstado === 'PASO3') {
+      virajeT3 = tiempoVuelta;
+      flashScreen('green'); vibrar([20,15,60]); beepViraje(3);
+      guardarDatosViraje('ortodoxo', virajeT1, virajeT2, virajeT3, 'En pared', 'Subacuático');
+      const lapsAhora = document.getElementById('lapsVuelta').children.length;
+      // Si ALWAYS, la siguiente también tiene viraje
+      if (esVueltaDeViraje(lapsAhora + 1)) {
+        virajeEstado = 'PASO1';
+        actualizarZonaVirajeUI(1);
+      } else {
+        virajeEstado = 'IDLE';
+        actualizarZonaVirajeUI(0);
+      }
+      renderTabla();
+    }
+  }
+}
+
+function guardarDatosViraje(tipo, t1, t2, t3, labelFase1, labelFase2) {
+  const tFase1    = (t2 - t1) / 1000;   // seg — rotación/en pared
+  const tFase2    = (t3 - t2) / 1000;   // seg — subacuático
+  const tTotal    = tFase1 + tFase2;
+  const n         = lapData.length;
+  if (n < 1) return;
+
+  const lap       = lapData[n-1];
+  const distLap   = parseFloat(document.getElementById('distanciaVuelta').value) || 25;
+  const tNadoPuro = Math.max(0, lap.tiempoSeg - tTotal);
+
+  // ── MÉTODO 1: estimación por longitud de ciclo (automático si hay datos de ciclo) ──
+  // ciclos_totales = tNadoPuro / tUnCiclo
+  // distNadoPuro   = ciclos_totales × longitudCiclo
+  // distSub        = distLap − distNadoPuro
+  let distNadoPuro = null, distSub = null, velSub = null, velNadoPuro = null;
+  let metodo = null;
+
+  if (lap.longitud && lap.frecHz && tNadoPuro > 0) {
+    const tUnCiclo     = 1 / lap.frecHz;                          // seg/ciclo
+    const ciclosTotales = tNadoPuro / tUnCiclo;                   // ciclos en superficie
+    const dNado        = ciclosTotales * lap.longitud;            // metros nadados arriba
+    const dSub         = distLap - dNado;                         // metros subacuáticos
+
+    if (dSub > 0 && dSub < distLap) {
+      distNadoPuro = parseFloat(dNado.toFixed(2));
+      distSub      = parseFloat(dSub.toFixed(2));
+      velNadoPuro  = parseFloat((dNado / tNadoPuro).toFixed(3));
+      velSub       = tFase2 > 0 ? parseFloat((dSub / tFase2).toFixed(3)) : null;
+      metodo       = 'ciclos';
+    }
+  }
+
+  // ── MÉTODO 2: metro de ruptura manual (override) ──
+  const mRupturaConfig = parseFloat(document.getElementById('metroRuptura')?.value) || 0;
+  if (mRupturaConfig > 0) {
+    distSub      = mRupturaConfig;
+    distNadoPuro = parseFloat(Math.max(0, distLap - mRupturaConfig).toFixed(2));
+    velSub       = tFase2 > 0 ? parseFloat((mRupturaConfig / tFase2).toFixed(3)) : null;
+    velNadoPuro  = (distNadoPuro > 0 && tNadoPuro > 0)
+                   ? parseFloat((distNadoPuro / tNadoPuro).toFixed(3)) : null;
+    metodo       = 'manual';
+  }
+
+  lap.viraje = {
+    tipo,
+    tFase1:      parseFloat(tFase1.toFixed(3)),
+    tFase2:      parseFloat(tFase2.toFixed(3)),
+    tTotal:      parseFloat(tTotal.toFixed(3)),
+    tNadoPuro:   parseFloat(tNadoPuro.toFixed(3)),
+    labelFase1,  labelFase2,
+    mRuptura:    distSub ? parseFloat(distSub.toFixed(1)) : 0,
+    distNadoPuro,
+    distSub,
+    velSub,
+    velNadoPuro,
+    metodo,      // 'ciclos' | 'manual' | null
+    tRot: parseFloat(tFase1.toFixed(3)),
+    tSub: parseFloat(tFase2.toFixed(3)),
+  };
 }
 function onTouchCiclo(e) {
   e.preventDefault(); const now=Date.now();
@@ -1086,11 +1735,36 @@ function actualizarVuelta() { tiempoVuelta+=10; document.getElementById('cronoVu
 function iniciarVuelta() { if(!corriendoVuelta){ intervaloVuelta=setInterval(actualizarVuelta,10); corriendoVuelta=true; } }
 function pausarVuelta()  { clearInterval(intervaloVuelta); corriendoVuelta=false; }
 function reiniciarVuelta() {
-  pausarVuelta(); tiempoVuelta=0; tiempoAnterior=0;
-  document.getElementById('cronoVuelta').textContent='00:00:00';
-  document.getElementById('lapsVuelta').innerHTML='';
-  lapData=[]; renderTabla(); renderChartCombo(); actualizarTouchCounters();
-  buildZoneChart(null,null,'',[]);document.getElementById('zonaBadge').innerHTML='';
+  // Cronómetro
+  pausarVuelta();
+  tiempoVuelta = 0;
+  tiempoAnterior = 0;
+  document.getElementById('cronoVuelta').textContent = '00:00:00';
+
+  // Lista de vueltas y datos
+  document.getElementById('lapsVuelta').innerHTML = '';
+  lapData = [];
+
+  // Ciclos — limpiar tomas y display
+  reiniciarCiclo();
+
+  // Virajes
+  virajeEstado = 'IDLE';
+  actualizarZonaVirajeUI(0);
+
+  // Gráficos y tabla
+  renderTabla();
+  renderChartCombo();
+  actualizarTouchCounters();
+  buildZoneChart(null, null, '', []);
+  document.getElementById('zonaBadge').innerHTML = '';
+  document.getElementById('tqePanel').style.display = 'none';
+  const vp=document.getElementById('virajeEvalPanel');if(vp)vp.style.display='none';
+  const dp=document.getElementById('diagnosticoPanel');if(dp)dp.style.display='none';
+
+  // Pantalla de inicio táctil
+  const ts = document.getElementById('touchStart');
+  if (ts) ts.classList.remove('hidden');
 }
 function registrarLap() {
   const lapMs=tiempoVuelta-tiempoAnterior;
@@ -1215,19 +1889,35 @@ function mostrarStatsCiclos() {
 // K = I * 60  → frecuencia (cic/min)
 // ═══════════════════════════════════════════════════════
 function procesarVuelta(n, tiempoSeg) {
-  const distancia=parseFloat(document.getElementById('distanciaVuelta').value);
-  if(!registrosCiclos.length||isNaN(distancia)||distancia<=0){
-    alert('Verificá que haya al menos una toma de ciclos y distancia válida.'); return;
+  const distancia = parseFloat(document.getElementById('distanciaVuelta').value);
+  if (isNaN(distancia) || distancia <= 0) {
+    alert('Verificá que la distancia de vuelta sea válida.'); return;
   }
-  // registrosCiclos = array de tiempos de 1 ciclo normalizado (ms)
-  const G = medianaArr(registrosCiclos)/1000;  // seg/ciclo — mediana de tomas
-  const H = distancia/tiempoSeg;               // m/s — velocidad
-  const I = 1/G;                               // ciclos/seg — F(hz)
-  const J = H/I;                               // m/ciclo — longitud de ciclo
-  const K = I*60;                              // ciclos/min — frecuencia
-  const L = H*J;                               // m²/s·ciclo — índice de ciclo
+  const H = distancia / tiempoSeg;  // m/s — velocidad (siempre disponible)
 
-  lapData.push({vuelta:n, tiempoSeg, velocidad:H, frecuencia:K, frecHz:I, longitud:J, indiceCiclo:L});
+  let G=null, I=null, J=null, K=null, L=null;
+
+  if (registrosCiclos.length > 0) {
+    // Tomas de ciclo disponibles — calcular métricas completas
+    G = medianaArr(registrosCiclos) / 1000;  // seg/ciclo
+    I = 1 / G;                               // ciclos/seg
+    J = H / I;                               // m/ciclo
+    K = I * 60;                              // ciclos/min
+    L = H * J;                               // índice de ciclo
+  }
+  // Si no hay ciclos, K/J/L quedan null → se muestran como — en tabla y gráficos
+
+  const estilo = document.getElementById('estiloNado')?.value || 'Crol';
+  lapData.push({
+    vuelta: n, tiempoSeg,
+    velocidad: H,
+    frecuencia: K,   // null si no se midió
+    frecHz:     I,
+    longitud:   J,   // null si no se midió
+    indiceCiclo: L,
+    sinCiclos: registrosCiclos.length === 0,
+    estilo,
+  });
   renderTabla();
   renderChartCombo();
   actualizarPuntoGlobal();
@@ -1547,14 +2237,14 @@ function renderTQEPanel(tqe, nRef=3) {
 function renderTabla() {
   const body = document.getElementById('effBody');
   if (!lapData.length) {
-    body.innerHTML = '<tr class="empty-row"><td colspan="9">Sin datos — registrá la primera vuelta</td></tr>';
+    body.innerHTML = '<tr class="empty-row"><td colspan="12">Sin datos — registrá la primera vuelta</td></tr>';
     document.getElementById('tqePanel').style.display = 'none';
     return;
   }
 
   const maxV = Math.max(...lapData.map(d=>d.velocidad));
-  const maxF = Math.max(...lapData.map(d=>d.frecuencia));
-  const maxL = Math.max(...lapData.map(d=>d.longitud));
+  const maxF = Math.max(...lapData.filter(d=>d.frecuencia!=null).map(d=>d.frecuencia)) || 1;
+  const maxL = Math.max(...lapData.filter(d=>d.longitud!=null).map(d=>d.longitud)) || 1;
 
   // Calcular TQE
   const tqe  = calcularTQE();
@@ -1582,46 +2272,207 @@ function renderTabla() {
   body.innerHTML = lapData.map((d, i) => {
     const est = estados[i];
     const rowClass = est === 'quiebre' ? ' class="quiebre-row"' : '';
+    const v = d.viraje;
+    const virajeCell = v
+      ? `<span style="color:var(--accent2);font-size:10px">${v.tTotal.toFixed(2)}s</span><br>
+         <span style="font-size:9px;color:var(--muted)" title="${v.labelFase1||'Fase 1'}/${v.labelFase2||'Fase 2'}">${v.tFase1!=null?v.tFase1.toFixed(2):v.tRot.toFixed(2)}+${v.tFase2!=null?v.tFase2.toFixed(2):v.tSub.toFixed(2)}</span>`
+      : '<span style="color:var(--border);font-size:10px">—</span>';
+    // Metro de ruptura editable por vuelta
+    const mRupturaActual = v ? (v.mRuptura || 0) : 0;
+    const metodoIcon = v?.metodo === 'ciclos' ? '~' : v?.metodo === 'manual' ? '✓' : '';
+    const mRupturaCell = v
+      ? `<div style="font-size:8px;color:var(--muted);text-align:center;margin-bottom:2px">${metodoIcon}${v.distSub ? v.distSub.toFixed(1)+'m' : ''}</div>
+         <input type="number" min="0" max="15" step="0.5" value="${mRupturaActual}"
+           style="width:52px;padding:3px 5px;background:var(--bg);border:1px solid ${v.metodo==='manual'?'var(--accent3)':'var(--border)'};
+                  border-radius:2px;color:var(--accent2);font-family:'Space Mono',monospace;
+                  font-size:10px;text-align:center"
+           onchange="editarMetroRuptura(${i}, parseFloat(this.value))"
+           title="${v.metodo==='ciclos'?'Estimado por ciclos de brazada':v.metodo==='manual'?'Dato manual ingresado':'Sin dato — ingresá el metro'}">`
+      : '<span style="color:var(--border);font-size:10px">—</span>';
+
+    const nadoPuroCell = v
+      ? `<span style="color:var(--accent3);font-size:10px">${v.tNadoPuro.toFixed(2)}s</span><br>
+         <span style="font-size:9px;color:var(--muted)">${v.velNadoPuro ? v.velNadoPuro.toFixed(3)+'m/s' : '—'}</span>`
+      : '<span style="color:var(--border);font-size:10px">—</span>';
     return `<tr${rowClass}>
       <td class="lap-num">V${d.vuelta}</td>
       <td>${formatSeg(d.tiempoSeg)}</td>
       <td class="val-speed">${d.velocidad.toFixed(3)}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);white-space:nowrap">${d.velocidad>0?fmtPace(100/d.velocidad):'—'}</td>
       <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:${(d.velocidad/maxV*100).toFixed(1)}%;background:var(--accent)"></div></div></div></td>
-      <td class="val-freq">${d.frecuencia.toFixed(1)}</td>
-      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:${(d.frecuencia/maxF*100).toFixed(1)}%;background:var(--accent2)"></div></div></div></td>
-      <td class="val-len">${d.longitud.toFixed(3)}</td>
-      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:${(d.longitud/maxL*100).toFixed(1)}%;background:var(--accent3)"></div></div></div></td>
+      <td class="val-freq">${d.frecuencia!=null?d.frecuencia.toFixed(1):'<span style=\'color:var(--border)\'>—</span>'}</td>
+      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:${d.frecuencia!=null?(d.frecuencia/maxF*100).toFixed(1):0}%;background:var(--accent2)"></div></div></div></td>
+      <td class="val-len">${d.longitud!=null?d.longitud.toFixed(3):'<span style=\'color:var(--border)\'>—</span>'}</td>
+      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:${d.longitud!=null?(d.longitud/maxL*100).toFixed(1):0}%;background:var(--accent3)"></div></div></div></td>
+      <td style="text-align:center;line-height:1.4">${virajeCell}</td>
+      <td style="text-align:center">${mRupturaCell}</td>
+      <td style="text-align:center;line-height:1.4">${nadoPuroCell}</td>
       <td style="text-align:center">${estadoBadge[est] || ''}</td>
     </tr>`;
   }).join('');
 
   renderTQEPanel(tqe, nRef);
+  evaluarVirajes();
+  generarDiagnostico();
 }
 
 // ═══════════════════════════════════════════════════════
 // CHART COMBO POR VUELTA
 // ═══════════════════════════════════════════════════════
 function renderChartCombo() {
-  const hasData=lapData.length>0;
-  document.getElementById('noDataCombo').style.display=hasData?'none':'block';
-  document.getElementById('chartCombo').style.display=hasData?'block':'none';
-  if(!hasData) return;
-  const labels=lapData.map(d=>`V${d.vuelta}`);
-  if(chartCombo) chartCombo.destroy();
-  chartCombo=new Chart(document.getElementById('chartCombo'),{
-    data:{labels,datasets:[
-      {type:'bar',label:'Velocidad (m/s)',data:lapData.map(d=>d.velocidad),backgroundColor:'rgba(0,212,255,0.2)',borderColor:'#00d4ff',borderWidth:1,borderRadius:2,yAxisID:'yV'},
-      {type:'line',label:'Frecuencia (cic/min)',data:lapData.map(d=>d.frecuencia),borderColor:'#ff6b35',backgroundColor:'transparent',pointBackgroundColor:'#ff6b35',pointRadius:5,tension:0.35,yAxisID:'yF'},
-      {type:'line',label:'Longitud (m/cic)',data:lapData.map(d=>d.longitud),borderColor:'#7fff6b',backgroundColor:'transparent',pointBackgroundColor:'#7fff6b',pointRadius:5,borderDash:[4,3],tension:0.35,yAxisID:'yF'}
-    ]},
-    options:{responsive:true,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{labels:{color:'#6a7a99',boxWidth:12,font:{size:10}}},
-        tooltip:{backgroundColor:'#121828',borderColor:'#1f2e4a',borderWidth:1,callbacks:{label:ctx=>`  ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}`}}},
-      scales:{
-        x:{grid:{color:'rgba(31,46,74,0.5)'},ticks:{color:'#6a7a99'}},
-        yV:{position:'left',grid:{color:'rgba(31,46,74,0.5)'},title:{display:true,text:'Velocidad (m/s)',color:'#00d4ff',font:{size:9}},ticks:{color:'#00d4ff',font:{size:9}}},
-        yF:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Frec · Long',color:'#ff6b35',font:{size:9}},ticks:{color:'#ff6b35',font:{size:9}}}
-      }}
+  const hasData = lapData.length > 0;
+  document.getElementById('noDataCombo').style.display = hasData ? 'none' : 'block';
+  document.getElementById('chartCombo').style.display  = hasData ? 'block' : 'none';
+  if (!hasData) return;
+
+  const labels = lapData.map(d => `V${d.vuelta}`);
+
+  // Velocidad de nado puro por vuelta (solo si hay datos de viraje con distancias)
+  const velNadoPuroData = lapData.map(d =>
+    d.viraje?.velNadoPuro != null ? d.viraje.velNadoPuro : null
+  );
+  const hayVelNadoPuro = velNadoPuroData.some(v => v != null);
+
+  if (chartCombo) chartCombo.destroy();
+
+  const datasets = [
+    // Barras: velocidad total — coloreadas por tipo de viraje
+    {
+      type: 'bar',
+      label: 'Vel. total (m/s)',
+      data: lapData.map(d => d.velocidad),
+      backgroundColor: lapData.map(d => {
+        if (!d.viraje) return 'rgba(0,212,255,0.2)';
+        return d.viraje.tipo === 'americana'
+          ? 'rgba(0,212,255,0.35)'    // cyan = americana
+          : 'rgba(255,107,53,0.35)';  // naranja = ortodoxo
+      }),
+      borderColor: lapData.map(d => {
+        if (!d.viraje) return '#00d4ff';
+        return d.viraje.tipo === 'americana' ? '#00d4ff' : '#ff6b35';
+      }),
+      borderWidth: 1,
+      borderRadius: 2,
+      yAxisID: 'yV',
+    },
+    // Línea naranja: frecuencia
+    {
+      type: 'line',
+      label: 'Frecuencia (cic/min)',
+      data: lapData.map(d => d.frecuencia),
+      borderColor: '#ff6b35',
+      backgroundColor: 'transparent',
+      pointBackgroundColor: '#ff6b35',
+      pointRadius: 5,
+      tension: 0.35,
+      yAxisID: 'yF',
+      spanGaps: true,
+    },
+    // Línea verde: longitud de ciclo
+    {
+      type: 'line',
+      label: 'Longitud (m/cic)',
+      data: lapData.map(d => d.longitud),
+      borderColor: '#7fff6b',
+      backgroundColor: 'transparent',
+      pointBackgroundColor: '#7fff6b',
+      pointRadius: 5,
+      borderDash: [4, 3],
+      tension: 0.35,
+      yAxisID: 'yF',
+      spanGaps: true,
+    },
+  ];
+
+  // Velocidad subacuática por vuelta
+  const velSubData = lapData.map(d =>
+    d.viraje?.velSub != null ? d.viraje.velSub : null
+  );
+  const hayVelSub = velSubData.some(v => v != null);
+
+  // Línea magenta: velocidad nado puro
+  if (hayVelNadoPuro) {
+    datasets.push({
+      type: 'line',
+      label: 'Vel. nado puro (m/s)',
+      data: velNadoPuroData,
+      borderColor: '#ff40a0',
+      backgroundColor: 'rgba(255,64,160,0.08)',
+      pointBackgroundColor: '#ff40a0',
+      pointRadius: 6,
+      pointStyle: 'triangle',
+      borderWidth: 2,
+      borderDash: [6, 3],
+      tension: 0.35,
+      yAxisID: 'yV',
+      spanGaps: true,
+    });
+  }
+
+  // Línea amarilla: velocidad subacuática
+  if (hayVelSub) {
+    datasets.push({
+      type: 'line',
+      label: 'Vel. subacuática (m/s)',
+      data: velSubData,
+      borderColor: '#ffd700',
+      backgroundColor: 'rgba(255,215,0,0.08)',
+      pointBackgroundColor: '#ffd700',
+      pointRadius: 6,
+      pointStyle: 'rectRot',
+      borderWidth: 2,
+      borderDash: [2, 3],
+      tension: 0.35,
+      yAxisID: 'yV',
+      spanGaps: true,
+    });
+  }
+
+  chartCombo = new Chart(document.getElementById('chartCombo'), {
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#6a7a99', boxWidth: 12, font: { size: 10 } } },
+        tooltip: {
+          backgroundColor: '#121828',
+          borderColor: '#1f2e4a',
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => {
+              if (ctx.parsed.y == null) return null;
+              // Para nado puro, mostrar también la diferencia con velocidad total
+              const velTotal = lapData[ctx.dataIndex]?.velocidad;
+              if (ctx.dataset.label?.includes('nado puro') && velTotal) {
+                const diff = ((ctx.parsed.y - velTotal) / velTotal * 100).toFixed(1);
+                return `  ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)} (${diff > 0 ? '+' : ''}${diff}% vs total)`;
+              }
+              if (ctx.dataset.label?.includes('subacuática') && velTotal) {
+                const diff = ((ctx.parsed.y - velTotal) / velTotal * 100).toFixed(1);
+                return `  ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)} (${diff > 0 ? '+' : ''}${diff}% vs total)`;
+              }
+              return `  ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(3)}`;
+            }
+          }
+        },
+      },
+      scales: {
+        x: { grid: { color: 'rgba(31,46,74,0.5)' }, ticks: { color: '#6a7a99' } },
+        yV: {
+          position: 'left',
+          grid: { color: 'rgba(31,46,74,0.5)' },
+          title: { display: true, text: 'Velocidad (m/s)', color: '#00d4ff', font: { size: 9 } },
+          ticks: { color: '#00d4ff', font: { size: 9 } },
+        },
+        yF: {
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: 'Frec · Long', color: '#ff6b35', font: { size: 9 } },
+          ticks: { color: '#ff6b35', font: { size: 9 } },
+        },
+      }
+    }
   });
 }
 
@@ -1666,6 +2517,698 @@ function guardarTest() {
   hist.unshift(test);
   guardarHistorial(hist);
   alert(`✓ Test de ${nombre} guardado en historial.`);
+}
+
+// ═══════════════════════════════════════════════════════
+
+
+
+
+// ═══════════════════════════════════════════════════════
+// TEST DE REACCIÓN DE PARTIDA
+// ═══════════════════════════════════════════════════════
+let estadoReaccion  = 'IDLE';   // IDLE | PREPARADOS | DISPARADO
+let tiempoDisparo   = 0;
+let timeoutDisparo  = null;
+let reactionSession = [];       // intentos de la sesión actual
+let lastTouchReac   = 0;        // debounce
+
+function entrarModoReaccion() {
+  document.getElementById('reactionMode').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  resetearReaccion();
+}
+
+function salirModoReaccion() {
+  clearTimeout(timeoutDisparo);
+  document.getElementById('reactionMode').classList.remove('active');
+  document.body.style.overflow = '';
+  estadoReaccion = 'IDLE';
+}
+
+function resetearReaccion() {
+  clearTimeout(timeoutDisparo);
+  estadoReaccion = 'IDLE';
+  const target = document.getElementById('reactionTarget');
+  target.style.background = '';
+  target.style.borderColor = '';
+  document.getElementById('reactionIcon').textContent   = '⏱';
+  document.getElementById('reactionStatus').textContent = 'Tocá "A sus marcas" para iniciar';
+  document.getElementById('reactionTime').style.display  = 'none';
+  document.getElementById('reactionEval').style.display  = 'none';
+  document.getElementById('reactionTime').textContent    = '000';
+  document.getElementById('btnReaccion').style.display   = 'block';
+  document.getElementById('btnReaccion').textContent     = '▶ A sus marcas';
+}
+
+function prepararPartida() {
+  if (estadoReaccion !== 'IDLE') return;
+  estadoReaccion = 'PREPARADOS';
+  document.getElementById('btnReaccion').style.display = 'none';
+  document.getElementById('reactionTime').style.display  = 'none';
+  document.getElementById('reactionEval').style.display  = 'none';
+
+  const target = document.getElementById('reactionTarget');
+  target.style.background = 'linear-gradient(160deg, #2a1f00, #1a1300)';
+
+  document.getElementById('reactionIcon').textContent   = '🧍';
+  document.getElementById('reactionStatus').textContent = '¡A SUS MARCAS!';
+  document.getElementById('reactionStatus').style.color = '#ffcc00';
+  vibrar(40);
+
+  // Retardo aleatorio entre 1.5 y 4 segundos
+  const retraso = 1500 + Math.random() * 2500;
+  timeoutDisparo = setTimeout(ejecutarDisparo, retraso);
+}
+
+function ejecutarDisparo() {
+  estadoReaccion  = 'DISPARADO';
+  tiempoDisparo   = performance.now();
+
+  const target = document.getElementById('reactionTarget');
+  target.style.background = 'linear-gradient(160deg, #002b11, #001a0a)';
+
+  document.getElementById('reactionIcon').textContent   = '🔊';
+  document.getElementById('reactionStatus').textContent = '¡YA!';
+  document.getElementById('reactionStatus').style.color = 'var(--accent3)';
+
+  // Pitido oficial de partida: agudo, seco, 0.25s
+  beep(4500, 0.25, 'sine', 0.45);
+  vibrar(30);
+  flashScreen('cyan');
+}
+
+function onTouchReaccion(e) {
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastTouchReac < 200) return;
+  lastTouchReac = now;
+
+  if (estadoReaccion === 'IDLE') return;
+
+  if (estadoReaccion === 'PREPARADOS') {
+    // FALSA PARTIDA
+    clearTimeout(timeoutDisparo);
+    estadoReaccion = 'IDLE';
+
+    const target = document.getElementById('reactionTarget');
+    target.style.background = 'linear-gradient(160deg, #330d12, #200009)';
+    document.getElementById('reactionIcon').textContent   = '❌';
+    document.getElementById('reactionStatus').textContent = 'FALSA PARTIDA';
+    document.getElementById('reactionStatus').style.color = 'var(--danger)';
+    vibrar([80, 40, 80]);
+    beep(180, 0.5, 'sawtooth', 0.3);
+
+    agregarHistoricoReaccion('FOUL', null);
+    setTimeout(resetearReaccion, 2200);
+    return;
+  }
+
+  if (estadoReaccion === 'DISPARADO') {
+    const ms = Math.round(performance.now() - tiempoDisparo);
+    estadoReaccion = 'IDLE';
+
+    vibrar(50);
+
+    // Evaluar
+    let eval_txt, eval_color;
+    if (ms < 100) {
+      eval_txt = '⚡ ¡Imposible — Falsa partida!'; eval_color = 'var(--danger)';
+      // FINA: < 100ms se considera falsa partida fisiológica
+      agregarHistoricoReaccion('FOUL', ms);
+    } else if (ms < 150) {
+      eval_txt = '⚡ Nivel Élite Olímpico'; eval_color = 'var(--accent3)';
+      agregarHistoricoReaccion(ms, ms);
+    } else if (ms < 200) {
+      eval_txt = '✦ Muy buena reacción'; eval_color = 'var(--accent)';
+      agregarHistoricoReaccion(ms, ms);
+    } else if (ms < 250) {
+      eval_txt = '▸ Buena reacción'; eval_color = 'var(--text)';
+      agregarHistoricoReaccion(ms, ms);
+    } else if (ms < 320) {
+      eval_txt = '▸ Reacción promedio'; eval_color = 'var(--muted)';
+      agregarHistoricoReaccion(ms, ms);
+    } else {
+      eval_txt = '🐢 A mejorar'; eval_color = 'var(--accent2)';
+      agregarHistoricoReaccion(ms, ms);
+    }
+
+    const target = document.getElementById('reactionTarget');
+    target.style.background = '';
+
+    const timeEl = document.getElementById('reactionTime');
+    timeEl.textContent    = ms + ' ms';
+    timeEl.style.color    = eval_color;
+    timeEl.style.display  = 'block';
+    timeEl.style.textShadow = `0 0 30px ${eval_color}`;
+
+    const evalEl = document.getElementById('reactionEval');
+    evalEl.textContent   = eval_txt;
+    evalEl.style.color   = eval_color;
+    evalEl.style.display = 'block';
+
+    document.getElementById('reactionIcon').textContent   = '🏁';
+    document.getElementById('reactionStatus').textContent = 'Tocá para nuevo intento';
+    document.getElementById('reactionStatus').style.color = 'var(--muted)';
+
+    document.getElementById('btnReaccion').style.display  = 'block';
+    document.getElementById('btnReaccion').textContent    = '▶ Otro intento';
+  }
+}
+
+function borrarHistorialReaccion() {
+  reactionSession = [];
+  document.getElementById('reactionHistory').innerHTML = '';
+  resetearReaccion();
+}
+
+function agregarHistoricoReaccion(valor, ms) {
+  const n = reactionSession.length + 1;
+  reactionSession.push({ n, valor, ms });
+
+  const el  = document.getElementById('reactionHistory');
+  const row = document.createElement('div');
+  row.className = 'reaction-hist-row';
+
+  const esFoul = valor === 'FOUL';
+  const color  = esFoul ? 'var(--danger)'
+    : ms < 150 ? 'var(--accent3)'
+    : ms < 200 ? 'var(--accent)'
+    : 'var(--muted)';
+
+  row.innerHTML = `
+    <span style="color:var(--muted)">#${n}</span>
+    <span style="color:${color};font-weight:700">${esFoul ? 'FOUL' : ms + ' ms'}</span>
+    <span style="color:var(--muted);font-size:9px">${
+      esFoul ? 'Falsa partida'
+      : ms < 150 ? 'Élite'
+      : ms < 200 ? 'Muy buena'
+      : ms < 250 ? 'Buena'
+      : ms < 320 ? 'Promedio'
+      : 'A mejorar'
+    }</span>`;
+
+  el.insertBefore(row, el.firstChild);  // más reciente arriba
+
+  // Mostrar estadísticas de sesión
+  const validos = reactionSession.filter(r => r.ms !== null).map(r => r.ms);
+  if (validos.length >= 2) {
+    const mejor   = Math.min(...validos);
+    const promedio = Math.round(validos.reduce((a,b)=>a+b,0) / validos.length);
+    const fouls   = reactionSession.filter(r => r.valor === 'FOUL').length;
+
+    // Actualizar o crear fila de stats
+    let statsRow = document.getElementById('reactionStats');
+    if (!statsRow) {
+      statsRow = document.createElement('div');
+      statsRow.id = 'reactionStats';
+      statsRow.style.cssText = 'display:flex;gap:8px;padding:8px 0;border-top:1px solid var(--border);margin-top:4px';
+      el.appendChild(statsRow);
+    }
+    statsRow.innerHTML = `
+      <div class="stat" style="min-width:60px"><div class="stat-val" style="color:var(--accent3)">${mejor}ms</div><div class="stat-label">Mejor</div></div>
+      <div class="stat" style="min-width:60px"><div class="stat-val" style="color:var(--accent)">${promedio}ms</div><div class="stat-label">Promedio</div></div>
+      <div class="stat" style="min-width:60px"><div class="stat-val" style="color:var(--danger)">${fouls}</div><div class="stat-label">Fouls</div></div>
+      <div class="stat" style="min-width:60px"><div class="stat-val" style="color:var(--muted)">${validos.length}</div><div class="stat-label">Intentos</div></div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ANÁLISIS DE VIRAJES
+// ═══════════════════════════════════════════════════════
+let virajeEstado    = 'IDLE'; // IDLE | PASO1 | PASO2 | PASO3
+let virajeT1 = 0, virajeT2 = 0, virajeT3 = 0;
+let virajeDataPorVuelta = []; // datos de viraje por vuelta
+
+function getConfigViraje() {
+  return {
+    freq:  document.getElementById('configViraje')?.value  || 'OFF',
+    tipo:  document.getElementById('tipoViraje')?.value    || 'americana',
+  };
+}
+
+function esVueltaDeViraje(nVuelta) {
+  const cfg = getConfigViraje();
+  if (cfg.freq === 'OFF')    return false;
+  if (cfg.freq === 'ALWAYS') return true;
+  const n = parseInt(cfg.freq);
+  return nVuelta % n === 0;
+}
+
+// Etiquetas según tipo y paso
+function labelsViraje(tipo, paso) {
+  const labels = {
+    americana: [
+      { icon:'🔄', label:'Toque al', action:'ROTAR',   state:'inicio de giro',   color:'viraje-1' },
+      { icon:'🦵', label:'Toque al', action:'PARED',   state:'pies en la pared', color:'viraje-2' },
+      { icon:'💦', label:'Toque al', action:'RUPTURA', state:'cabeza emerge',     color:'viraje-3' },
+    ],
+    ortodoxo: [
+      { icon:'🤲', label:'Toque al', action:'MANOS',   state:'contacto manos → cierra LAP',  color:'viraje-2' },
+      { icon:'🦵', label:'Toque al', action:'DESPEGUE',state:'pies despegan de la pared',     color:'viraje-1' },
+      { icon:'💦', label:'Toque al', action:'RUPTURA', state:'cabeza rompe la superficie',    color:'viraje-3' },
+    ],
+  };
+  return labels[tipo][paso];
+}
+
+function actualizarZonaVirajeUI(paso) {
+  // paso: 0=normal, 1=paso1, 2=paso2, 3=paso3
+  const zona = document.getElementById('zoneVuelta');
+  zona.classList.remove('viraje-1','viraje-2','viraje-3');
+
+  if (paso === 0) {
+    document.getElementById('t-virajeIcon').textContent   = '🏊';
+    document.getElementById('t-virajeLabel').textContent  = 'Toque para';
+    document.getElementById('t-virajeAction').textContent = 'Vuelta';
+    document.getElementById('t-virajeState').textContent  = 'tiempo del lap actual';
+    return;
+  }
+
+  const tipo = getConfigViraje().tipo;
+  const lb   = labelsViraje(tipo, paso - 1);
+  zona.classList.add(lb.color);
+  document.getElementById('t-virajeIcon').textContent   = lb.icon;
+  document.getElementById('t-virajeLabel').textContent  = lb.label;
+  document.getElementById('t-virajeAction').textContent = lb.action;
+  document.getElementById('t-virajeState').textContent  = lb.state;
+}
+
+// Beeps diferenciados por paso
+function beepViraje(paso) {
+  if (paso === 1) { beep(880, 0.07, 'sine', 0.3); }
+  if (paso === 2) { beepVuelta(); } // doble beep = lap
+  if (paso === 3) { beep(1200, 0.06, 'sine', 0.3); setTimeout(()=>beep(1400,0.08,'sine',0.25),60); }
+}
+
+// ── PANTALLA DE INICIO TÁCTIL ──
+let lastTouchStart = 0;
+
+function onTouchStart(e) {
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastTouchStart < 300) return;
+  lastTouchStart = now;
+  // Ocultar pantalla de inicio
+  const ts = document.getElementById('touchStart');
+  if (ts) ts.classList.add('hidden');
+  // Arrancar cronómetro
+  iniciarVuelta();
+  vibrar(200);
+  beep(440, 0.08, 'sine', 0.3);
+  setTimeout(() => beep(660, 0.1, 'sine', 0.25), 90);
+  // Si viraje en TODAS las vueltas, activar inmediatamente para la primera vuelta
+  if (esVueltaDeViraje(1)) {
+    setTimeout(() => {
+      if (corriendoVuelta) {
+        beep(600, 0.06, 'sine', 0.25);
+        setTimeout(() => beep(900, 0.08, 'sine', 0.2), 80);
+        virajeEstado = 'PASO1';
+        actualizarZonaVirajeUI(1);
+      }
+    }, 400);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// EVALUACIÓN COSTO/BENEFICIO DEL VIRAJE
+// ═══════════════════════════════════════════════════════
+
+function evaluarVirajes() {
+  const panel = document.getElementById('virajeEvalPanel');
+  if (!panel) return;
+
+  // Necesitamos al menos 1 viraje registrado y vueltas posteriores
+  const lapsConViraje = lapData.filter(d => d.viraje);
+  if (!lapsConViraje.length) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  const nPost    = parseInt(document.getElementById('umbralVirajePost')?.value || 2);
+  const umbralVelCaida  = parseFloat(document.getElementById('umbralVel')?.value  || 3) / 100;
+  const umbralLongCaida = parseFloat(document.getElementById('umbralLong')?.value || 6) / 100;
+
+  // Promedio de tTotal de viraje (línea base)
+  const tVirajePromedio = lapsConViraje.reduce((s,d)=>s+d.viraje.tTotal,0) / lapsConViraje.length;
+
+  const evaluaciones = [];
+
+  lapsConViraje.forEach(lapViraje => {
+    const idx   = lapData.indexOf(lapViraje);
+    const vPost = lapData.slice(idx+1, idx+1+nPost).filter(d=>d.velocidad);
+    if (!vPost.length) return;
+
+    // Métricas de referencia: promedio de las 3 primeras vueltas
+    const nRef  = parseInt(document.getElementById('umbralRef')?.value || 3);
+    const base  = lapData.slice(0, nRef);
+    const baseVel  = base.reduce((s,d)=>s+(d.velocidad||0),0) / base.length;
+    const baseLong = base.filter(d=>d.longitud!=null).reduce((s,d)=>s+d.longitud,0) /
+                     (base.filter(d=>d.longitud!=null).length || 1);
+
+    // Rendimiento post-viraje
+    const velPost  = vPost.reduce((s,d)=>s+(d.velocidad||0),0) / vPost.length;
+    const longPost = vPost.filter(d=>d.longitud!=null);
+    const longPostMed = longPost.length
+      ? longPost.reduce((s,d)=>s+d.longitud,0) / longPost.length
+      : null;
+
+    const dVel  = baseVel  > 0 ? (baseVel  - velPost)  / baseVel  : 0;
+    const dLong = (longPostMed && baseLong > 0) ? (baseLong - longPostMed) / baseLong : 0;
+
+    // Comparar tiempo de viraje con promedio
+    const esVirRapido = lapViraje.viraje.tTotal < tVirajePromedio * 0.95;
+    const esVirLento  = lapViraje.viraje.tTotal > tVirajePromedio * 1.10;
+
+    // Diagnosticar
+    let diagnostico, icono, color, sugerencia;
+
+    if (esVirRapido && (dVel > umbralVelCaida || dLong > umbralLongCaida)) {
+      diagnostico = 'Fatiga por Viraje';
+      icono       = '🚨';
+      color       = 'var(--danger)';
+      sugerencia  = `Viraje rápido (${lapViraje.viraje.tTotal.toFixed(2)}s) pero las ${nPost} vueltas siguientes muestran caída de velocidad (−${(dVel*100).toFixed(1)}%)${longPostMed?` y longitud (−${(dLong*100).toFixed(1)}%)`:''}. Revisar apnea o no extender la patada subacuática.`;
+    } else if (esVirLento && dVel <= umbralVelCaida * 0.5) {
+      diagnostico = 'Viraje Pasivo';
+      icono       = '🐢';
+      color       = 'var(--accent2)';
+      sugerencia  = `Viraje lento (${lapViraje.viraje.tTotal.toFixed(2)}s vs promedio ${tVirajePromedio.toFixed(2)}s) pero sin fatiga posterior. Ajustar velocidad de aproximación o acelerar el giro.`;
+    } else if (!esVirLento && dVel <= umbralVelCaida * 0.5) {
+      diagnostico = 'Viraje Óptimo';
+      icono       = '✨';
+      color       = 'var(--accent3)';
+      sugerencia  = `Excelente fluidez. El subacuático aportó velocidad sin generar deuda de oxígeno visible en las ${nPost} vueltas siguientes.`;
+    } else {
+      diagnostico = 'Viraje Normal';
+      icono       = '▸';
+      color       = 'var(--muted)';
+      sugerencia  = `Sin anomalías detectadas en las ${nPost} vueltas post-viraje.`;
+    }
+
+    evaluaciones.push({
+      vuelta:      lapViraje.vuelta,
+      tTotal:      lapViraje.viraje.tTotal,
+      tFase1:      lapViraje.viraje.tFase1,
+      tFase2:      lapViraje.viraje.tFase2,
+      tipo:        lapViraje.viraje.tipo,
+      velSub:      lapViraje.viraje.velSub      || null,
+      velNadoPuro: lapViraje.viraje.velNadoPuro || null,
+      diagnostico, icono, color, sugerencia,
+      dVelPct:    (dVel*100).toFixed(1),
+      dLongPct:   (dLong*100).toFixed(1),
+    });
+  });
+
+  if (!evaluaciones.length) { panel.style.display='none'; return; }
+
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),transparent)"></div>
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);font-family:'Space Mono',monospace;margin-bottom:16px">
+        🔄 Evaluación de Virajes
+      </div>
+      ${evaluaciones.map(ev => `
+        <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid ${ev.color};border-radius:3px;padding:14px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <span style="font-size:1.1rem">${ev.icono}</span>
+              <strong style="color:${ev.color};font-size:0.95rem;letter-spacing:1px;text-transform:uppercase;margin-left:6px">${ev.diagnostico}</strong>
+              <span style="color:var(--muted);font-family:'Space Mono',monospace;font-size:10px;margin-left:8px">V${ev.vuelta} · ${ev.tipo}</span>
+            </div>
+            <div style="text-align:right;font-family:'Space Mono',monospace;font-size:11px">
+              <div style="color:${ev.color};font-weight:700">${ev.tTotal.toFixed(2)}s</div>
+              <div style="color:var(--muted);font-size:9px">total viraje</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px 10px;text-align:center;flex:1;min-width:60px">
+              <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:0.9rem;color:var(--accent)">${ev.tFase1.toFixed(2)}s</div>
+              <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">${ev.tipo==='americana'?'Rotación':'En pared'}</div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px 10px;text-align:center;flex:1;min-width:60px">
+              <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:0.9rem;color:var(--accent2)">${ev.tFase2.toFixed(2)}s</div>
+              <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Subacuático</div>
+            </div>
+            ${ev.velSub ? `<div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px 10px;text-align:center;flex:1;min-width:60px">
+              <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:0.9rem;color:var(--accent3)">${ev.velSub.toFixed(2)}m/s</div>
+              <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">V. subac. real</div>
+            </div>` : ''}
+            ${ev.velNadoPuro ? `<div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px 10px;text-align:center;flex:1;min-width:60px">
+              <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:0.9rem;color:var(--accent)">${ev.velNadoPuro.toFixed(2)}m/s</div>
+              <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">V. nado puro</div>
+            </div>` : ''}
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:6px 10px;text-align:center;flex:1;min-width:60px">
+              <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:0.9rem;color:var(--danger)">${ev.dVelPct}%</div>
+              <div style="font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Δ Vel post</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.6;font-style:italic">${ev.sugerencia}</div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function editarMetroRuptura(lapIdx, nuevoMetro) {
+  const lap = lapData[lapIdx];
+  if (!lap || !lap.viraje) return;
+  const distLap = parseFloat(document.getElementById('distanciaVuelta').value) || 25;
+
+  if (nuevoMetro > 0) {
+    // Override manual — usa el metro ingresado (método preciso)
+    lap.viraje.mRuptura     = nuevoMetro;
+    lap.viraje.distSub      = nuevoMetro;
+    const dNado = Math.max(0, distLap - nuevoMetro);
+    lap.viraje.distNadoPuro = parseFloat(dNado.toFixed(2));
+    lap.viraje.velSub       = lap.viraje.tFase2 > 0
+      ? parseFloat((nuevoMetro / lap.viraje.tFase2).toFixed(3)) : null;
+    lap.viraje.velNadoPuro  = (dNado > 0 && lap.viraje.tNadoPuro > 0)
+      ? parseFloat((dNado / lap.viraje.tNadoPuro).toFixed(3)) : null;
+    lap.viraje.metodo       = 'manual';
+  } else {
+    // Volver a estimación por ciclos si hay datos
+    lap.viraje.mRuptura     = 0;
+    lap.viraje.metodo       = null;
+    lap.viraje.distNadoPuro = null;
+    lap.viraje.distSub      = null;
+    lap.viraje.velSub       = null;
+    lap.viraje.velNadoPuro  = null;
+  }
+  renderTabla();
+  evaluarVirajes();
+}
+
+// ═══════════════════════════════════════════════════════
+// MOTOR DE DIAGNÓSTICO AUTOMÁTICO
+// ═══════════════════════════════════════════════════════
+
+function std(arr) {
+  if (arr.length < 2) return 0;
+  const mean = arr.reduce((a,b)=>a+b,0)/arr.length;
+  return Math.sqrt(arr.reduce((s,v)=>s+(v-mean)**2,0)/arr.length);
+}
+
+function generarDiagnostico() {
+  const panel = document.getElementById('diagnosticoPanel');
+  if (!panel) return;
+
+  // Necesitamos al menos 4 vueltas para análisis significativo
+  if (lapData.length < 3) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  const nRef  = parseInt(document.getElementById('umbralRef')?.value || 3);
+  const items = [];
+
+  // ── ANÁLISIS 1: Fatiga técnica — caída de longitud de ciclo ──
+  const lapsConLC = lapData.filter(d => d.longitud != null);
+  if (lapsConLC.length >= 4) {
+    const primeras = lapsConLC.slice(0, 2).map(d => d.longitud);
+    const ultimas  = lapsConLC.slice(-2).map(d => d.longitud);
+    const lcInicio = primeras.reduce((a,b)=>a+b,0) / primeras.length;
+    const lcFinal  = ultimas.reduce((a,b)=>a+b,0)  / ultimas.length;
+    const caida    = (lcInicio - lcFinal) / lcInicio;
+
+    if (caida > 0.08) {
+      items.push({
+        tipo: 'alerta', icono: '⚠️',
+        nombre: 'Fatiga Técnica Detectada',
+        desc: `Pérdida de tracción en el tramo final. La longitud de ciclo cayó un ${(caida*100).toFixed(1)}% respecto al inicio — el nadador avanza menos metros por brazada al fatigarse.`,
+        datos: [
+          { val: lcInicio.toFixed(2)+'m', label: 'LC inicio' },
+          { val: lcFinal.toFixed(2)+'m',  label: 'LC final' },
+          { val: '-'+(caida*100).toFixed(1)+'%', label: 'Caída' },
+        ]
+      });
+    } else if (caida > 0.04) {
+      items.push({
+        tipo: 'warning', icono: '📉',
+        nombre: 'Leve Caída de Longitud',
+        desc: `La longitud de ciclo bajó un ${(caida*100).toFixed(1)}% en el tramo final. Inicio de fatiga técnica leve — monitorear en pruebas más largas.`,
+        datos: [
+          { val: lcInicio.toFixed(2)+'m', label: 'LC inicio' },
+          { val: lcFinal.toFixed(2)+'m',  label: 'LC final' },
+          { val: '-'+(caida*100).toFixed(1)+'%', label: 'Caída' },
+        ]
+      });
+    } else {
+      items.push({
+        tipo: 'optimo', icono: '✦',
+        nombre: 'Longitud de Ciclo Consistente',
+        desc: `Excelente mantenimiento de la longitud de ciclo a lo largo del test (variación: ${(Math.abs(caida)*100).toFixed(1)}%). Sin señales de fatiga técnica por pérdida de tracción.`,
+        datos: [
+          { val: lcInicio.toFixed(2)+'m', label: 'LC inicio' },
+          { val: lcFinal.toFixed(2)+'m',  label: 'LC final' },
+        ]
+      });
+    }
+  }
+
+  // ── ANÁLISIS 2: Zona óptima — mejor vuelta (excl. primera) ──
+  const lapsConDatos = lapData.slice(1).filter(d =>
+    d.velocidad && d.frecuencia && d.longitud && d.indiceCiclo
+  );
+  if (lapsConDatos.length >= 2) {
+    const distLap = parseFloat(document.getElementById('distanciaVuelta').value) || 25;
+
+    // Buscar vuelta con mayor velocidad en zona white (sweet spot)
+    const enSweetSpot = lapsConDatos.filter(d => {
+      const pace = 100 / d.velocidad;
+      return determinarZona(pace, d.longitud) === 'white';
+    });
+
+    const pool = enSweetSpot.length > 0 ? enSweetSpot : lapsConDatos;
+    const mejor = pool.reduce((best, d) =>
+      (d.velocidad * (d.indiceCiclo||1)) > (best.velocidad * (best.indiceCiclo||1)) ? d : best
+    , pool[0]);
+
+    const paceStr = fmtPace(100 / mejor.velocidad);
+    items.push({
+      tipo: 'optimo', icono: '🎯',
+      nombre: 'Zona Óptima del Atleta',
+      desc: `Su mejor equilibrio de velocidad y eficiencia${enSweetSpot.length > 0 ? ' (en sweet spot)' : ''} se encontró en la vuelta ${mejor.vuelta}: ${mejor.frecuencia.toFixed(1)} cic/min deslizando ${mejor.longitud.toFixed(2)} metros por ciclo.`,
+      datos: [
+        { val: 'V'+mejor.vuelta,                  label: 'Vuelta' },
+        { val: mejor.velocidad.toFixed(3)+'m/s',  label: 'Velocidad' },
+        { val: paceStr,                            label: 'Pace' },
+        { val: mejor.frecuencia.toFixed(1),        label: 'cic/min' },
+        { val: mejor.longitud.toFixed(2)+'m',      label: 'm/ciclo' },
+      ]
+    });
+  }
+
+  // ── ANÁLISIS 3: Consistencia de ritmo — "dientes de sierra" ──
+  if (lapData.length >= 4) {
+    const tiempos = lapData.map(d => d.tiempoSeg);
+    // Diferencias entre vueltas consecutivas
+    const diffs = [];
+    for (let i=1; i<tiempos.length; i++) {
+      diffs.push(Math.abs(tiempos[i] - tiempos[i-1]));
+    }
+    const diffMax  = Math.max(...diffs);
+    const diffMean = diffs.reduce((a,b)=>a+b,0)/diffs.length;
+    const desviacion = std(tiempos);
+    const umbral = 1.2;
+
+    // Encontrar la peor transición
+    const peorIdx = diffs.indexOf(diffMax);
+    const v1 = lapData[peorIdx]?.vuelta;
+    const v2 = lapData[peorIdx+1]?.vuelta;
+
+    if (diffMax > umbral * 1.8 || desviacion > 1.5) {
+      items.push({
+        tipo: 'alerta', icono: '📊',
+        nombre: 'Ritmo Inconsistente',
+        desc: `Se detectaron fluctuaciones altas entre parciales (σ=${desviacion.toFixed(2)}s). La mayor variación fue entre V${v1} y V${v2} (${diffMax.toFixed(2)}s de diferencia). Trabajar en la regularidad del ritmo de crucero.`,
+        datos: [
+          { val: desviacion.toFixed(2)+'s',  label: 'Desviación σ' },
+          { val: diffMax.toFixed(2)+'s',     label: 'Máx. salto' },
+          { val: `V${v1}→V${v2}`,            label: 'Peor tramo' },
+        ]
+      });
+    } else if (diffMax > umbral) {
+      items.push({
+        tipo: 'warning', icono: '📊',
+        nombre: 'Algunas Fluctuaciones de Ritmo',
+        desc: `Variaciones moderadas entre parciales (σ=${desviacion.toFixed(2)}s). La mayor diferencia fue de ${diffMax.toFixed(2)}s entre V${v1} y V${v2}. Ritmo mayormente estable.`,
+        datos: [
+          { val: desviacion.toFixed(2)+'s', label: 'Desviación σ' },
+          { val: diffMax.toFixed(2)+'s',    label: 'Máx. salto' },
+        ]
+      });
+    } else {
+      items.push({
+        tipo: 'optimo', icono: '✓',
+        nombre: 'Ritmo Consistente',
+        desc: `Excelente regularidad de parciales (σ=${desviacion.toFixed(2)}s, máx. variación ${diffMax.toFixed(2)}s). El nadador distribuyó el esfuerzo de manera uniforme.`,
+        datos: [
+          { val: desviacion.toFixed(2)+'s', label: 'Desviación σ' },
+          { val: diffMean.toFixed(2)+'s',   label: 'Variación media' },
+        ]
+      });
+    }
+  }
+
+  // ── ANÁLISIS 4: Tendencia de pace (mejora vs caída) ──
+  if (lapData.length >= 4) {
+    const vels = lapData.map(d => d.velocidad);
+    const n = vels.length;
+    // Regresión lineal simple sobre velocidad
+    const xs = vels.map((_,i) => i);
+    const mx = (n-1)/2;
+    const mv = vels.reduce((a,b)=>a+b,0)/n;
+    const slope = xs.reduce((s,x,i)=>s+(x-mx)*(vels[i]-mv),0) /
+                  xs.reduce((s,x)=>s+(x-mx)**2,0);
+
+    // slope positivo = mejora; negativo = caída
+    const slopePct = (slope / mv) * 100;
+    if (Math.abs(slopePct) > 0.5) {
+      items.push({
+        tipo: slope > 0 ? 'optimo' : 'warning',
+        icono: slope > 0 ? '📈' : '📉',
+        nombre: slope > 0 ? 'Tendencia Positiva de Velocidad' : 'Tendencia Decreciente de Velocidad',
+        desc: slope > 0
+          ? `La velocidad mejoró progresivamente a lo largo del test (+${slopePct.toFixed(2)}%/vuelta). Excelente calentamiento o distribución táctica del esfuerzo.`
+          : `La velocidad decayó progresivamente (${slopePct.toFixed(2)}%/vuelta). Fatiga acumulada o estrategia de salida demasiado rápida.`,
+        datos: [
+          { val: (slope*1000).toFixed(2)+'mm/s', label: 'Δ vel/vuelta' },
+          { val: (slopePct > 0?'+':'')+slopePct.toFixed(2)+'%', label: 'Tendencia' },
+        ]
+      });
+    }
+  }
+
+  if (!items.length) { panel.style.display='none'; return; }
+
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="diag-panel">
+      <div class="diag-title">🧠 Diagnóstico Automático</div>
+      ${items.map(item => `
+        <div class="diag-item ${item.tipo}">
+          <div class="diag-icon">${item.icono}</div>
+          <div style="flex:1">
+            <div class="diag-name" style="color:${
+              item.tipo==='alerta'?'var(--danger)':
+              item.tipo==='optimo'?'var(--accent3)':
+              item.tipo==='warning'?'var(--accent2)':
+              'var(--accent)'}">${item.nombre}</div>
+            <div class="diag-desc">${item.desc}</div>
+            ${item.datos?.length ? `
+            <div class="diag-data">
+              ${item.datos.map(d=>`
+                <div class="diag-datum">
+                  <div class="diag-datum-val" style="color:${
+                    item.tipo==='alerta'?'var(--danger)':
+                    item.tipo==='optimo'?'var(--accent3)':
+                    'var(--accent2)'}">${d.val}</div>
+                  <div class="diag-datum-label">${d.label}</div>
+                </div>`).join('')}
+            </div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
 }
 
 // ── SORT STATE ──
@@ -1740,32 +3283,120 @@ function fmtTiempo(segs) {
   return `${m}:${s.toFixed(2).padStart(5,'0')}`;
 }
 
+// Set de IDs seleccionados en historial
+const histSeleccion = new Set();
+
+function toggleSeleccion(id, checked) {
+  if (checked) histSeleccion.add(id);
+  else histSeleccion.delete(id);
+  // Actualizar clase visual
+  const card = document.querySelector(`.hist-card[data-id="${id}"]`);
+  if (card) card.classList.toggle('selected', checked);
+  // Actualizar barra
+  const n = histSeleccion.size;
+  const bar = document.getElementById('histExportBar');
+  const cnt = document.getElementById('histExportCount');
+  if (bar) bar.classList.toggle('visible', n > 0);
+  if (cnt) cnt.textContent = n === 1 ? '1 test seleccionado' : `${n} tests seleccionados`;
+}
+
+function deseleccionarTodo() {
+  histSeleccion.clear();
+  document.querySelectorAll('.hist-card.selected').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.hist-check').forEach(cb => cb.checked = false);
+  const bar = document.getElementById('histExportBar');
+  if (bar) bar.classList.remove('visible');
+}
+
+function exportarSeleccion() {
+  if (!histSeleccion.size) { alert('Seleccioná al menos un test.'); return; }
+  const hist = cargarHistorial();
+  const seleccionados = [...histSeleccion].map(id => hist.find(t => t.id === id)).filter(Boolean);
+
+  const salida = seleccionados.map(t => ({
+    datos_generales: {
+      atleta:          t.nombre,
+      fecha:           t.fecha,
+      largo_piscina:   t.distLap,
+      vueltas_totales: t.nVueltas,
+      distancia_total: t.distTotal,
+      tiempo_total:    fmtTiempo(t.tiempoTotal),
+      pace_global:     fmtPace(t.paceSegs),
+      zona_eficiencia: t.zona,
+    },
+    vueltas: (t.laps || []).map(d => {
+      const v = d.viraje;
+      const pace100 = d.velocidad > 0 ? fmtPace(100/d.velocidad) : null;
+      return {
+        vuelta:               d.vuelta,
+        estilo:               d.estilo || '—',
+        tiempo_total_lap_seg: parseFloat((d.tiempoSeg||0).toFixed(3)),
+        velocidad_total_ms:   parseFloat((d.velocidad||0).toFixed(4)),
+        pace_100m:            pace100,
+        frecuencia_cic_min:   d.frecuencia != null ? parseFloat(d.frecuencia.toFixed(2)) : null,
+        longitud_ciclo_m:     d.longitud   != null ? parseFloat(d.longitud.toFixed(4))   : null,
+        viraje: v ? {
+          tipo:                   v.tipo,
+          tiempo_fase1_seg:       v.tFase1,
+          tiempo_subacuatico_seg: v.tFase2,
+          tiempo_total_viraje:    v.tTotal,
+          tiempo_nado_puro_seg:   v.tNadoPuro,
+          distancia_subacuatica:  v.distSub       || null,
+          distancia_nado_puro:    v.distNadoPuro   || null,
+          vel_subacuatica_ms:     v.velSub         || null,
+          vel_nado_puro_ms:       v.velNadoPuro    || null,
+          tipo_calculo:           v.metodo         || null,
+        } : null,
+      };
+    }),
+  }));
+
+  const payload = salida.length === 1 ? salida[0] : salida;
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  const nombres = seleccionados.map(t=>t.nombre.replace(/\s+/g,'_')).join('-vs-');
+  a.download = `swim_${nombres}_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function renderHistorial() {
   const hist = sortedHistorial(cargarHistorial());
   const el   = document.getElementById('histList');
 
   if(!hist.length) {
     el.innerHTML = '<div class="hist-empty">Sin tests guardados</div>';
+    deseleccionarTodo();
     return;
   }
 
   el.innerHTML = hist.map(t => {
-    const zonaIcon = t.zona==='red'?'🔴':t.zona==='blue'?'🔵':'✦';
+    const zonaIcon  = t.zona==='red'?'🔴':t.zona==='blue'?'🔵':'✦';
+    const isChecked = histSeleccion.has(t.id);
     return `
-    <div class="hist-card zona-${t.zona}" onclick="verTestHistorial(${t.id})">
-      <button class="hist-card-del" onclick="event.stopPropagation();borrarTest(${t.id})">✕</button>
-      <div class="hist-card-top">
-        <div>
-          <div class="hist-card-name">${t.nombre}</div>
-          <div class="hist-card-date">${t.fecha} &nbsp;·&nbsp; ${t.distTotal}m &nbsp;·&nbsp; ${t.nVueltas} vueltas</div>
+    <div class="hist-card zona-${t.zona}${isChecked?' selected':''}" data-id="${t.id}">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <input type="checkbox" class="hist-check" ${isChecked?'checked':''}
+          onchange="toggleSeleccion(${t.id},this.checked)"
+          onclick="event.stopPropagation()">
+        <div style="flex:1" onclick="verTestHistorial(${t.id})">
+          <button class="hist-card-del" onclick="event.stopPropagation();borrarTest(${t.id})">✕</button>
+          <div class="hist-card-top">
+            <div>
+              <div class="hist-card-name">${t.nombre}</div>
+              <div class="hist-card-date">${t.fecha} &nbsp;·&nbsp; ${t.distTotal}m &nbsp;·&nbsp; ${t.nVueltas} vueltas</div>
+            </div>
+            <div style="font-size:1.4rem">${zonaIcon}</div>
+          </div>
+          <div class="hist-card-stats">
+            <div class="hist-stat"><div class="hist-stat-val" style="color:var(--accent)">${fmtPace(parseFloat(t.paceSegs))}</div><div class="hist-stat-label">Pace /100m</div></div>
+            <div class="hist-stat"><div class="hist-stat-val" style="color:var(--accent3)">${parseFloat(t.lcMedia).toFixed(2)}</div><div class="hist-stat-label">m/ciclo</div></div>
+            <div class="hist-stat"><div class="hist-stat-val" style="color:var(--accent2)">${parseFloat(t.freqMedia).toFixed(1)}</div><div class="hist-stat-label">cic/min</div></div>
+            <div class="hist-stat"><div class="hist-stat-val" style="color:#e8edf5">${fmtTiempo(parseFloat(t.tiempoTotal))}</div><div class="hist-stat-label">Tiempo total</div></div>
+          </div>
         </div>
-        <div style="font-size:1.4rem">${zonaIcon}</div>
-      </div>
-      <div class="hist-card-stats">
-        <div class="hist-stat"><div class="hist-stat-val" style="color:var(--accent)">${fmtPace(parseFloat(t.paceSegs))}</div><div class="hist-stat-label">Pace /100m</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" style="color:var(--accent3)">${parseFloat(t.lcMedia).toFixed(2)}</div><div class="hist-stat-label">m/ciclo</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" style="color:var(--accent2)">${parseFloat(t.freqMedia).toFixed(1)}</div><div class="hist-stat-label">cic/min</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" style="color:#e8edf5">${fmtTiempo(parseFloat(t.tiempoTotal))}</div><div class="hist-stat-label">Tiempo total</div></div>
       </div>
     </div>`;
   }).join('');
@@ -1803,6 +3434,58 @@ function borrarTodo() {
   if(!confirm('¿Borrar TODO el historial? Esta acción no se puede deshacer.')) return;
   guardarHistorial([]);
   renderHistorial();
+}
+
+function exportarJSON() {
+  const hist = cargarHistorial();
+  if (!hist.length) { alert('No hay tests guardados.'); return; }
+
+  const salida = hist.map(t => ({
+    datos_generales: {
+      atleta:           t.nombre,
+      fecha:            t.fecha,
+      largo_piscina:    t.distLap,
+      vueltas_totales:  t.nVueltas,
+      distancia_total:  t.distTotal,
+      tiempo_total:     fmtTiempo(t.tiempoTotal),
+      pace_global:      fmtPace(t.paceSegs),
+      zona_eficiencia:  t.zona,
+    },
+    vueltas: (t.laps || []).map(d => {
+      const v = d.viraje;
+      return {
+        vuelta:               d.vuelta,
+        estilo:               d.estilo || '—',
+        tiempo_total_lap_seg: parseFloat((d.tiempoSeg||0).toFixed(3)),
+        velocidad_total_ms:   parseFloat((d.velocidad||0).toFixed(4)),
+        frecuencia_cic_min:   d.frecuencia != null ? parseFloat(d.frecuencia.toFixed(2)) : null,
+        longitud_ciclo_m:     d.longitud   != null ? parseFloat(d.longitud.toFixed(4))   : null,
+        indice_ciclo:         d.indiceCiclo!= null ? parseFloat(d.indiceCiclo.toFixed(4)): null,
+        viraje: v ? {
+          tipo:                  v.tipo,
+          tiempo_fase1_seg:      v.tFase1,
+          tiempo_subacuatico_seg:v.tFase2,
+          tiempo_total_viraje:   v.tTotal,
+          tiempo_nado_puro_seg:  v.tNadoPuro,
+          distancia_subacuatica: v.distSub    || null,
+          distancia_nado_puro:   v.distNadoPuro || null,
+          vel_subacuatica_ms:    v.velSub      || null,
+          vel_nado_puro_ms:      v.velNadoPuro || null,
+          tipo_calculo:          v.metodo      || null,
+          label_fase1:           v.labelFase1  || null,
+          label_fase2:           v.labelFase2  || null,
+        } : null,
+      };
+    }),
+  }));
+
+  const blob = new Blob([JSON.stringify(salida, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `swim_informe_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function exportarCSV() {
@@ -1964,7 +3647,16 @@ function parseCSVRow(row) {
 
     <hr class="footer-divider">
 
-    <div class="footer-support-title">¿Te sirve la app? Apoyá el proyecto</div>
+    <!-- Mensaje de donación directo al valor real -->
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">
+        ¿Esta app te ahorró tiempo en el borde de la pileta?
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;line-height:1.6;max-width:380px;margin:0 auto">
+        Cada función que usás reemplaza hojas de cálculo, cronómetros separados y análisis manuales.<br>
+        Si te resultó útil, colaborá para seguir desarrollándola.
+      </div>
+    </div>
 
     <div class="footer-regions">
 
@@ -2002,14 +3694,45 @@ function parseCSVRow(row) {
 
     </div>
 
-    <div style="text-align:center;margin-top:18px;font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;opacity:0.5;letter-spacing:1px">
-      Esta app es gratuita y de uso libre · Los datos se guardan solo en tu dispositivo
+    <!-- Botones extra: changelog + reporte ──────────────── -->
+    <div class="footer-extra">
+      <button class="footer-extra-btn" onclick="toggleChangelog()">📋 Novedades</button>
+      <a class="footer-extra-btn" href="mailto:hugo.corbalan@gmail.com?subject=Swim%20Analysis%20App%20%E2%80%94%20Reporte&body=Describe%20el%20problema%20o%20sugerencia%3A%0A%0A%5BVersión%3A%20v1.3%5D" target="_blank">🐛 Reportar problema</a>
+    </div>
+
+    <!-- Changelog ──────────────────────────────────────── -->
+    <div class="changelog-panel" id="changelogPanel">
+      <div class="changelog-version">v1.3 — Mayo 2026</div>
+      <div class="changelog-item">Motor de diagnóstico automático (fatiga, ritmo, zona óptima)</div>
+      <div class="changelog-item">Análisis de virajes con evaluación costo/beneficio</div>
+      <div class="changelog-item">Estimación de distancia subacuática por longitud de ciclo</div>
+      <div class="changelog-item">Test de reacción de partida con historial de sesión</div>
+      <div class="changelog-item">Exportación JSON selectiva para informes comparativos</div>
+      <div class="changelog-item">Selector de estilo de nado + panel de chequeo pre-largada</div>
+      <div class="changelog-version" style="margin-top:12px">v1.2</div>
+      <div class="changelog-item">Punto de quiebre técnico (TQE) con sliders configurables</div>
+      <div class="changelog-item">Gráfico Swim Smooth con curvas exponenciales calibradas</div>
+      <div class="changelog-item">Historial con localStorage + exportación/importación CSV</div>
+      <div class="changelog-item">Modo táctil pantalla completa con vibración y beep</div>
+      <div class="changelog-version" style="margin-top:12px">v1.0 — v1.1</div>
+      <div class="changelog-item">Cronómetro de vueltas y ciclos de brazada</div>
+      <div class="changelog-item">Cálculo de velocidad, frecuencia y longitud de ciclo</div>
+      <div class="changelog-item">Tabla de eficiencia por vuelta con barras comparativas</div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px;font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;opacity:0.5;letter-spacing:1px">
+      Gratuita · código abierto · datos solo en tu dispositivo
     </div>
 
   </div>
 </footer>
 
 <script>
+function toggleChangelog() {
+  const p = document.getElementById('changelogPanel');
+  p.classList.toggle('open');
+}
+
 function copiarAddr(id, btn) {
   const addr = document.getElementById(id).textContent.trim();
   navigator.clipboard.writeText(addr).then(() => {
