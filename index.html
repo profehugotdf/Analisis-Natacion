@@ -782,6 +782,19 @@
     </div>
     <button class="touch-exit" onclick="salirModoTactil()">✕ Salir</button>
   </div>
+  <!-- Botón salir preflight — FUERA del touchStart para no disparar el cronómetro -->
+  <button ontouchstart="salirModoTactil()" onclick="salirModoTactil()" style="
+    position:absolute;top:16px;right:16px;z-index:20;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    font-family:'Space Mono',monospace;
+    font-size:11px;letter-spacing:2px;
+    text-transform:uppercase;
+    padding:6px 12px;border-radius:3px;
+    cursor:pointer"
+    id="btnSalirPreflight">✕ Salir</button>
+
   <!-- Pantalla de inicio gigante con preflight -->
   <div id="touchStart" ontouchstart="onTouchStart(event)" onclick="onTouchStart(event)">
     <div class="touch-start-icon" style="animation:float 3s ease-in-out infinite">🏊</div>
@@ -1494,9 +1507,11 @@ function entrarModoTactil() {
     tipoRow.style.display = 'none';
   }
 
-  // Mostrar pantalla de inicio
+  // Mostrar pantalla de inicio y botón salir
   const ts = document.getElementById('touchStart');
   if (ts) ts.classList.remove('hidden');
+  const bsp = document.getElementById('btnSalirPreflight');
+  if (bsp) bsp.style.display = 'block';
 }
 function salirModoTactil()  { document.getElementById('touchMode').classList.remove('active'); document.body.style.overflow=''; }
 function actualizarTouchCounters() {
@@ -2809,9 +2824,11 @@ function onTouchStart(e) {
   const now = Date.now();
   if (now - lastTouchStart < 300) return;
   lastTouchStart = now;
-  // Ocultar pantalla de inicio
+  // Ocultar pantalla de inicio y botón salir
   const ts = document.getElementById('touchStart');
   if (ts) ts.classList.add('hidden');
+  const bsp = document.getElementById('btnSalirPreflight');
+  if (bsp) bsp.style.display = 'none';
   // Arrancar cronómetro
   iniciarVuelta();
   vibrar(200);
