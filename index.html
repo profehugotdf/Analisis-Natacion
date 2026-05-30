@@ -722,6 +722,96 @@
     .zone-white  { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); }
     .zone-blue   { background:rgba(52,152,219,0.15); border:1px solid rgba(52,152,219,0.3); }
 
+    /* ── MÓDULO DE LARGADA ── */
+    #largadaScreen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      touch-action: none;
+    }
+    #largadaScreen.active { display: flex; }
+
+    .largada-fase {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 10px;
+    }
+    .largada-crono {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2rem,8vw,4rem);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      text-shadow: 0 0 30px rgba(0,212,255,0.4);
+    }
+    .largada-instruccion {
+      font-size: clamp(0.7rem,2.5vw,0.9rem);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 30px;
+    }
+    .largada-btn {
+      width: 85%;
+      max-width: 340px;
+      padding: clamp(28px,8vw,48px) 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-touch-callout: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--accent);
+      background: linear-gradient(160deg,#0d1f33,#091525);
+      transition: filter 0.1s;
+    }
+    .largada-btn:active { filter: brightness(1.4); }
+    .largada-btn-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      margin-bottom: 6px;
+    }
+    .largada-btn-action {
+      font-size: clamp(1.6rem,6vw,2.8rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    .largada-segmentos {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .largada-seg {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 8px 14px;
+      text-align: center;
+      min-width: 90px;
+    }
+    .largada-seg-val   { font-family:'Space Mono',monospace; font-weight:700; font-size:1.1rem; }
+    .largada-seg-label { font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-top:3px; }
+
     /* ── PREFLIGHT ── */
     @keyframes float {
       0%,100% { transform: translateY(0); }
@@ -782,6 +872,23 @@
     </div>
     <button class="touch-exit" onclick="salirModoTactil()">✕ Salir</button>
   </div>
+  <!-- ══ PANTALLA DE LARGADA ══ -->
+  <div id="largadaScreen">
+    <div class="largada-fase" id="largadaFaseLabel">Largada</div>
+    <div class="largada-crono" id="largadaCrono">00:00:00</div>
+    <div class="largada-instruccion" id="largadaInstruccion">Tocá al entrar al agua</div>
+
+    <div class="largada-btn"
+         id="largadaBtn"
+         ontouchstart="onTouchLargada(event)"
+         onclick="onTouchLargada(event)">
+      <div class="largada-btn-label" id="largadaBtnLabel">Registrar</div>
+      <div class="largada-btn-action" id="largadaBtnAction">ENTRADA</div>
+    </div>
+
+    <div class="largada-segmentos" id="largadaSegmentos"></div>
+  </div>
+
   <!-- Botón salir preflight — FUERA del touchStart para no disparar el cronómetro -->
   <button ontouchstart="salirModoTactil()" onclick="salirModoTactil()" style="
     position:absolute;top:16px;right:16px;z-index:20;
@@ -822,6 +929,10 @@
       <div class="preflight-row" id="chkTipoRow" style="display:none">
         <span class="preflight-key">TIPO</span>
         <span class="preflight-val" id="chkTipo" style="color:var(--muted)">—</span>
+      </div>
+      <div class="preflight-row" id="chkLargadaRow">
+        <span class="preflight-key">LARGADA</span>
+        <span class="preflight-val" id="chkLargada" style="color:var(--accent)">—</span>
       </div>
     </div>
 
@@ -894,6 +1005,14 @@
     <div class="panel accent2">
       <div class="panel-title">Configuración de prueba</div>
       <div class="field"><label>Metros por vuelta</label><input type="number" id="distanciaVuelta" min="1" step="1" value="25"></div>
+      <div class="field">
+        <label>Tipo de Largada</label>
+        <select id="tipoLargada" style="width:100%;padding:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:12px;border-radius:3px;outline:none">
+          <option value="directa">Directa al nado (sin analizar largada)</option>
+          <option value="arriba">Desde arriba — 2 segmentos (Entrada + Ruptura)</option>
+          <option value="abajo">Desde abajo — 1 segmento (Ruptura)</option>
+        </select>
+      </div>
       <div class="field"><label>Ciclos por toma (N)</label><input type="number" id="ciclosBrazada" min="1" step="1" value="3"><div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace;line-height:1.5">Cada toma mide N ciclos continuos.<br>Podés hacer varias tomas por vuelta.<br>Mediana de tomas → <strong style="color:var(--accent3)">1 ciclo</strong></div></div>
       <div class="field">
         <label>Análisis de viraje</label>
@@ -1493,6 +1612,13 @@ function entrarModoTactil() {
   set('chkPiscina', piscina + 'm');
   set('chkCiclos',  ciclos + ' cic');
 
+  // Largada
+  const largadaLabels = {
+    'directa':'Directa', 'arriba':'Desde arriba (2 seg.)', 'abajo':'Desde abajo (1 seg.)'
+  };
+  const largadaSel = tipoLargada();
+  set('chkLargada', largadaLabels[largadaSel] || largadaSel);
+
   const virajeLabels = {
     'OFF':'Desactivado','ALWAYS':'Todas las vueltas',
     '2':'Cada 2 vueltas','4':'Cada 4 vueltas','8':'Cada 8 vueltas'
@@ -1776,6 +1902,7 @@ function reiniciarVuelta() {
   document.getElementById('tqePanel').style.display = 'none';
   const vp=document.getElementById('virajeEvalPanel');if(vp)vp.style.display='none';
   const dp=document.getElementById('diagnosticoPanel');if(dp)dp.style.display='none';
+  window.sesionLargada = null;
 
   // Pantalla de inicio táctil
   const ts = document.getElementById('touchStart');
@@ -2523,6 +2650,7 @@ function guardarTest() {
   const test = {
     id: Date.now(),
     nombre, fecha,
+    largada: window.sesionLargada || null,
     distLap, nVueltas: lapData.length, distTotal,
     tiempoTotal, paceSegs, lcMedia, freqMedia, icMedia, zona,
     laps: lapData.map(d=>({...d}))
@@ -2749,6 +2877,166 @@ function agregarHistoricoReaccion(valor, ms) {
 }
 
 // ═══════════════════════════════════════════════════════
+// MÓDULO DE LARGADA
+// Estados: IDLE → (arriba: INICIO→ENTRADA→RUPTURA) | (abajo: INICIO→RUPTURA)
+// ═══════════════════════════════════════════════════════
+let largadaEstado  = 'IDLE';
+let largadaT0      = 0;   // toque inicial (arranque crono)
+let largadaT1      = 0;   // toque entrada al agua (solo modo arriba)
+let largadaT2      = 0;   // toque ruptura de superficie
+let largadaTimer   = null;
+let lastTouchLarg  = 0;
+
+function tipoLargada() {
+  return document.getElementById('tipoLargada')?.value || 'directa';
+}
+
+function entrarLargada() {
+  largadaEstado = 'INICIO';
+  const tipo = tipoLargada();
+
+  // Configurar textos iniciales
+  document.getElementById('largadaFaseLabel').textContent    = tipo === 'arriba' ? 'Largada desde arriba' : 'Largada desde abajo';
+  document.getElementById('largadaCrono').textContent         = '00:00:00';
+  document.getElementById('largadaInstruccion').textContent   = tipo === 'arriba'
+    ? 'Toque 1 — al momento de despegar del bloque'
+    : 'Toque 1 — al saltar al agua';
+  document.getElementById('largadaBtnLabel').textContent      = 'Toque 1 de ' + (tipo === 'arriba' ? '3' : '2');
+  document.getElementById('largadaBtnAction').textContent     = 'INICIAR';
+  document.getElementById('largadaBtn').style.borderColor     = 'var(--accent)';
+  document.getElementById('largadaBtn').style.background      = 'linear-gradient(160deg,#0d1f33,#091525)';
+  document.getElementById('largadaBtnAction').style.color     = 'var(--accent)';
+  document.getElementById('largadaSegmentos').innerHTML       = '';
+
+  // Mostrar pantalla
+  document.getElementById('largadaScreen').classList.add('active');
+}
+
+function salirLargada() {
+  largadaEstado = 'IDLE';
+  clearInterval(largadaTimer);
+  document.getElementById('largadaScreen').classList.remove('active');
+}
+
+function updateLargadaCrono() {
+  if (largadaT0 === 0) return;
+  const elapsed = tiempoVuelta;  // usa el crono principal
+  document.getElementById('largadaCrono').textContent = fmtMs(elapsed);
+}
+
+function mostrarSegmento(label, ms, color) {
+  const el = document.getElementById('largadaSegmentos');
+  const seg = document.createElement('div');
+  seg.className = 'largada-seg';
+  seg.innerHTML = `
+    <div class="largada-seg-val" style="color:${color}">${(ms/1000).toFixed(3)}s</div>
+    <div class="largada-seg-label">${label}</div>`;
+  el.appendChild(seg);
+}
+
+function onTouchLargada(e) {
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastTouchLarg < 350) return;
+  lastTouchLarg = now;
+
+  const tipo = tipoLargada();
+
+  // ── TOQUE 1: iniciar cronómetro ──
+  if (largadaEstado === 'INICIO') {
+    largadaT0 = tiempoVuelta;
+    iniciarVuelta();  // arranca el crono principal
+    largadaEstado = tipo === 'arriba' ? 'ESPERANDO_ENTRADA' : 'ESPERANDO_RUPTURA';
+
+    // Feedback
+    vibrar(200);
+    beep(440, 0.08, 'sine', 0.3);
+    setTimeout(() => beep(660, 0.1, 'sine', 0.25), 90);
+    flashScreen('cyan');
+
+    // Update UI
+    if (tipo === 'arriba') {
+      document.getElementById('largadaInstruccion').textContent  = 'Toque 2 — al entrar al agua';
+      document.getElementById('largadaBtnLabel').textContent     = 'Toque 2 de 3';
+      document.getElementById('largadaBtnAction').textContent    = 'ENTRADA';
+      document.getElementById('largadaBtn').style.borderColor    = 'var(--accent2)';
+      document.getElementById('largadaBtnAction').style.color    = 'var(--accent2)';
+    } else {
+      document.getElementById('largadaInstruccion').textContent  = 'Toque 2 — al romper la superficie';
+      document.getElementById('largadaBtnLabel').textContent     = 'Toque 2 de 2';
+      document.getElementById('largadaBtnAction').textContent    = 'RUPTURA';
+      document.getElementById('largadaBtn').style.borderColor    = 'var(--accent3)';
+      document.getElementById('largadaBtnAction').style.color    = 'var(--accent3)';
+    }
+    // Actualizar crono cada 10ms
+    largadaTimer = setInterval(updateLargadaCrono, 10);
+    return;
+  }
+
+  // ── TOQUE 2 (modo arriba): entrada al agua ──
+  if (largadaEstado === 'ESPERANDO_ENTRADA') {
+    largadaT1 = tiempoVuelta;
+    vibrar(40);
+    beep(880, 0.07, 'sine', 0.3);
+    flashScreen('orange');
+
+    const tVuelo = largadaT1 - largadaT0;
+    mostrarSegmento('Tiempo de vuelo', tVuelo, 'var(--accent2)');
+
+    largadaEstado = 'ESPERANDO_RUPTURA';
+    document.getElementById('largadaInstruccion').textContent  = 'Toque 3 — al romper la superficie';
+    document.getElementById('largadaBtnLabel').textContent     = 'Toque 3 de 3';
+    document.getElementById('largadaBtnAction').textContent    = 'RUPTURA';
+    document.getElementById('largadaBtn').style.borderColor    = 'var(--accent3)';
+    document.getElementById('largadaBtnAction').style.color    = 'var(--accent3)';
+    return;
+  }
+
+  // ── TOQUE FINAL: ruptura de superficie → transición al nado ──
+  if (largadaEstado === 'ESPERANDO_RUPTURA') {
+    largadaT2 = tiempoVuelta;
+    vibrar([20, 15, 60]);
+    beep(1200, 0.06, 'sine', 0.3);
+    setTimeout(() => beep(1400, 0.08, 'sine', 0.25), 60);
+    flashScreen('green');
+    clearInterval(largadaTimer);
+
+    // Calcular segmentos
+    if (tipo === 'arriba') {
+      const tSub = largadaT2 - largadaT1;
+      mostrarSegmento('Subacuático', tSub, 'var(--accent3)');
+      const tTotal = largadaT2 - largadaT0;
+      mostrarSegmento('Total largada', tTotal, 'var(--accent)');
+    } else {
+      const tSub = largadaT2 - largadaT0;
+      mostrarSegmento('Subacuático', tSub, 'var(--accent3)');
+    }
+
+    // Guardar en objeto de datos de la sesión
+    const largadaData = {
+      tipo,
+      tLargada: (largadaT2 - largadaT0) / 1000,
+      tVuelo:   tipo === 'arriba' ? (largadaT1 - largadaT0) / 1000 : null,
+      tSub:     tipo === 'arriba' ? (largadaT2 - largadaT1) / 1000 : (largadaT2 - largadaT0) / 1000,
+    };
+    // Guardarlo en una variable global para incluir en el test
+    window.sesionLargada = largadaData;
+
+    // Mostrar resumen 1.2s y luego transición al modo vuelta/ciclo
+    largadaEstado = 'DONE';
+    document.getElementById('largadaBtnAction').textContent   = '✓ LISTO';
+    document.getElementById('largadaInstruccion').textContent = 'Pasando al cronometraje...';
+
+    setTimeout(() => {
+      salirLargada();
+      // Mostrar zonas vuelta/ciclo normalmente
+      document.getElementById('touchStart').classList.add('hidden');
+      document.getElementById('btnSalirPreflight').style.display = 'none';
+    }, 1200);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
 // ANÁLISIS DE VIRAJES
 // ═══════════════════════════════════════════════════════
 let virajeEstado    = 'IDLE'; // IDLE | PASO1 | PASO2 | PASO3
@@ -2824,17 +3112,27 @@ function onTouchStart(e) {
   const now = Date.now();
   if (now - lastTouchStart < 300) return;
   lastTouchStart = now;
-  // Ocultar pantalla de inicio y botón salir
+
+  // Ocultar pantalla de inicio
   const ts = document.getElementById('touchStart');
   if (ts) ts.classList.add('hidden');
   const bsp = document.getElementById('btnSalirPreflight');
   if (bsp) bsp.style.display = 'none';
-  // Arrancar cronómetro
+
+  const tipo = tipoLargada();
+
+  if (tipo !== 'directa') {
+    // ── Módulo de largada activo: ir a pantalla de análisis ──
+    entrarLargada();
+    return;
+  }
+
+  // ── Directa: arrancar cronómetro inmediatamente ──
   iniciarVuelta();
   vibrar(200);
   beep(440, 0.08, 'sine', 0.3);
   setTimeout(() => beep(660, 0.1, 'sine', 0.25), 90);
-  // Si viraje en TODAS las vueltas, activar inmediatamente para la primera vuelta
+  // Si viraje en TODAS las vueltas, activar para la primera
   if (esVueltaDeViraje(1)) {
     setTimeout(() => {
       if (corriendoVuelta) {
